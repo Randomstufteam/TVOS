@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,8 +31,8 @@ public final class QuickSettingsActivity extends Activity {
         setContentView(R.layout.activity_quick_settings);
         if (getResources().getBoolean(R.bool.rtl_menu_bar)) {
             View panel = findViewById(R.id.panel);
-            android.widget.FrameLayout.LayoutParams position =
-                    (android.widget.FrameLayout.LayoutParams) panel.getLayoutParams();
+            FrameLayout.LayoutParams position =
+                    (FrameLayout.LayoutParams) panel.getLayoutParams();
             position.gravity = android.view.Gravity.TOP | android.view.Gravity.LEFT;
             int inset = position.getMarginEnd();
             position.setMarginEnd(0);
@@ -40,9 +41,12 @@ public final class QuickSettingsActivity extends Activity {
         }
         findViewById(R.id.scrim).setOnClickListener(v -> finish());
         LinearLayout rows = findViewById(R.id.rows);
-        addRow(rows, R.drawable.ic_settings, R.string.tv_settings, 0, SystemSettings.intent(this, Settings.ACTION_SETTINGS));
-        addRow(rows, R.drawable.ic_picture, R.string.quick_picture, 0, SystemSettings.intent(this, Settings.ACTION_DISPLAY_SETTINGS));
-        addRow(rows, R.drawable.ic_wifi, R.string.quick_network, 0, SystemSettings.intent(this, Settings.ACTION_WIFI_SETTINGS));
+        addRow(rows, R.drawable.ic_settings, R.string.tv_settings, 0, SystemSettings.intent(this,
+                Settings.ACTION_SETTINGS));
+        addRow(rows, R.drawable.ic_picture, R.string.quick_picture, 0, SystemSettings.intent(this,
+                Settings.ACTION_DISPLAY_SETTINGS));
+        addRow(rows, R.drawable.ic_wifi, R.string.quick_network, 0, SystemSettings.intent(this,
+                Settings.ACTION_WIFI_SETTINGS));
         addRow(rows, R.drawable.ic_apps, R.string.quick_apps, R.string.quick_apps_hint,
                 SystemSettings.intent(this, Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS));
         // Through Home, so it rebuilds with the new choices when Launcher settings closes.

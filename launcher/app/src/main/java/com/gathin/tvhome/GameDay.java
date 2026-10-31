@@ -26,7 +26,8 @@ import java.util.concurrent.RejectedExecutionException;
 final class GameDay {
     static final String META = "com.gathin.tvhome.games";
     static final int TURN_DEFAULT = 30;
-    private static final String[] COLUMNS = {"top_line", "word", "start_ms", "end_ms", "colour", "calendar", "turn_seconds"};
+    private static final String[] COLUMNS = {"top_line", "word", "start_ms", "end_ms", "colour", "calendar",
+            "turn_seconds"};
 
     private final Context ctx;
     private final Uri uri;

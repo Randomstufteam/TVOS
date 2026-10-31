@@ -49,8 +49,10 @@ final class SystemSettings {
     /** The first system app's page for this action, made explicit, or null when only ordinary apps answer it. */
     private static Intent firstSystemHandler(PackageManager pm, Intent action) {
         for (ResolveInfo ri : pm.queryIntentActivities(action, PackageManager.MATCH_DEFAULT_ONLY)) {
-            if (ri.activityInfo == null || (ri.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0) continue;
-            return new Intent(action).setComponent(new ComponentName(ri.activityInfo.packageName, ri.activityInfo.name));
+            if (ri.activityInfo == null
+                    || (ri.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0) continue;
+            return new Intent(action).setComponent(new ComponentName(ri.activityInfo.packageName,
+                    ri.activityInfo.name));
         }
         return null;
     }
@@ -81,6 +83,7 @@ final class SystemSettings {
     /** The TV's App info page for pkg, or null where the firmware has none (CVTE's settings app, #1202). */
     static Intent appInfo(Context context, String pkg) {
         Intent info = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg));
-        return context.getPackageManager().resolveActivity(info, PackageManager.MATCH_DEFAULT_ONLY) != null ? info : null;
+        return context.getPackageManager().resolveActivity(info, PackageManager.MATCH_DEFAULT_ONLY) != null ? info
+                : null;
     }
 }

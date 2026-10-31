@@ -3,7 +3,6 @@ package com.gathin.tvhome;
 import android.app.ActivityManager;
 import android.app.usage.StorageStats;
 import android.app.usage.StorageStatsManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -30,7 +29,6 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -98,7 +96,8 @@ final class TvPages {
     private View hero(int icon, int color, CharSequence big, CharSequence small, View end) {
         LinearLayout box = new LinearLayout(ctx);
         box.setGravity(Gravity.CENTER_VERTICAL);
-        box.setBackground(Ui.sheen(ctx, 24, Ui.withAlpha(color, 0x40), 0x14FFFFFF, 0x33FFFFFF, Math.max(1, Ui.dp(ctx, 1))));
+        box.setBackground(Ui.sheen(ctx, 24, Ui.withAlpha(color, 0x40), 0x14FFFFFF, 0x33FFFFFF, Math.max(1, Ui.dp(ctx,
+                1))));
         int pad = Ui.dp(ctx, 20);
         box.setPadding(pad, pad, pad, pad);
         FrameLayout tile = new FrameLayout(ctx);
@@ -120,9 +119,9 @@ final class TvPages {
         TextView b = Ui.text(ctx, small, 14, R.string.font_light, Ui.TEXT_DIM);
         b.setPadding(0, Ui.dp(ctx, 6), 0, 0);
         text.addView(b);
-        box.addView(text, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        box.addView(text, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
         if (end != null) box.addView(end);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP);
         lp.bottomMargin = Ui.dp(ctx, 6);
         box.setLayoutParams(lp);
         return box;
@@ -186,10 +185,13 @@ final class TvPages {
         if (w != null) {
             int[] words = {R.string.tv_signal_weak, R.string.tv_signal_weak, R.string.tv_signal_fair,
                     R.string.tv_signal_good, R.string.tv_signal_excellent};
-            r.addView(info(s(R.string.tv_network_signal), s(R.string.tv_network_signal_value, s(words[level]), w.getRssi())));
-            if (w.getLinkSpeed() > 0) r.addView(info(s(R.string.tv_network_speed), s(R.string.tv_network_speed_value, w.getLinkSpeed())));
+            r.addView(info(s(R.string.tv_network_signal), s(R.string.tv_network_signal_value, s(words[level]),
+                    w.getRssi())));
+            if (w.getLinkSpeed() > 0) r.addView(info(s(R.string.tv_network_speed), s(R.string.tv_network_speed_value,
+                    w.getLinkSpeed())));
             int mhz = w.getFrequency();
-            if (mhz > 0) r.addView(info(s(R.string.tv_network_band), mhz >= 5900 ? "6 GHz" : mhz >= 4900 ? "5 GHz" : "2.4 GHz"));
+            if (mhz > 0) r.addView(info(s(R.string.tv_network_band), mhz >= 5900 ? "6 GHz" : mhz >= 4900
+                    ? "5 GHz" : "2.4 GHz"));
         }
         String dnsMode = Settings.Global.getString(ctx.getContentResolver(), "private_dns_mode");
         String dnsHost = Settings.Global.getString(ctx.getContentResolver(), "private_dns_specifier");
@@ -247,7 +249,8 @@ final class TvPages {
             }));
         }
         if (Settings.System.canWrite(ctx)) {
-            boolean clicks = Settings.System.getInt(ctx.getContentResolver(), Settings.System.SOUND_EFFECTS_ENABLED, 1) == 1;
+            boolean clicks = Settings.System.getInt(ctx.getContentResolver(), Settings.System.SOUND_EFFECTS_ENABLED,
+                    1) == 1;
             r.addView(Ui.toggle(ctx, s(R.string.tv_sound_effects), clicks, v -> {
                 Settings.System.putInt(ctx.getContentResolver(), Settings.System.SOUND_EFFECTS_ENABLED, clicks ? 0 : 1);
                 if (clicks) audio.unloadSoundEffects(); else audio.loadSoundEffects();
@@ -271,7 +274,7 @@ final class TvPages {
         f.setCornerRadius(Ui.dp(ctx, 3));
         fill.setBackground(f);
         int width = Ui.dp(ctx, 150);
-        track.addView(fill, new FrameLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT));
+        track.addView(fill, new FrameLayout.LayoutParams(0, Ui.MATCH));
         LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(width, Ui.dp(ctx, 6));
         tl.setMarginEnd(Ui.dp(ctx, 14));
         row.addView(track, tl);
@@ -317,7 +320,8 @@ final class TvPages {
         r.addView(hero(R.drawable.ic_picture, 0xFFF97316, dm.widthPixels + " × " + dm.heightPixels, hz + " Hz", null));
         r.addView(info(s(R.string.tv_display_hdr), hdrFormats(d)));
         r.addView(screensaverDelay());
-        add(r, link(R.string.tv_display_picture, s(R.string.tv_display_picture_hint), Settings.ACTION_DISPLAY_SETTINGS));
+        add(r, link(R.string.tv_display_picture, s(R.string.tv_display_picture_hint),
+                Settings.ACTION_DISPLAY_SETTINGS));
     }
 
     private String hdrFormats(android.view.Display d) {
@@ -364,7 +368,8 @@ final class TvPages {
     private String duration(int ms) {
         if (ms <= 0 || ms == Integer.MAX_VALUE) return s(R.string.tv_display_never);
         int minutes = Math.max(1, ms / 60_000);
-        return minutes >= 60 && minutes % 60 == 0 ? s(R.string.tv_display_hours, minutes / 60) : s(R.string.tv_display_minutes, minutes);
+        return minutes >= 60 && minutes % 60 == 0 ? s(R.string.tv_display_hours, minutes / 60)
+                : s(R.string.tv_display_minutes, minutes);
     }
 
     // --- apps ----------------------------------------------------------------------------------------------------
@@ -407,7 +412,8 @@ final class TvPages {
         r.addView(hero(R.drawable.ic_apps, 0xFFEF4444, s(R.string.tv_apps_summary, apps.size(),
                 Formatter.formatShortFileSize(ctx, total)), s(R.string.tv_apps_note), null));
         for (App a : apps) {
-            LinearLayout row = Ui.navRow(ctx, a.label, a.bytes >= 0 ? Formatter.formatShortFileSize(ctx, a.bytes) : null,
+            LinearLayout row = Ui.navRow(ctx, a.label, a.bytes >= 0 ? Formatter.formatShortFileSize(ctx, a.bytes)
+                    : null,
                     v -> appMenu(a));
             if (a.icon != null) {
                 ImageView iv = new ImageView(ctx);
@@ -445,7 +451,8 @@ final class TvPages {
             } catch (Exception noAccess) {
                 // usage access not granted, or the app went away: no size
             }
-            out.add(new App(pkg, Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg), Ui.smallIcon(ctx, ri.loadIcon(pm), iconPx), bytes));
+            out.add(new App(pkg, Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg), Ui.smallIcon(ctx,
+                    ri.loadIcon(pm), iconPx), bytes));
         }
         out.sort((a, b) -> b.bytes != a.bytes ? Long.compare(b.bytes, a.bytes) : a.label.compareToIgnoreCase(b.label));
         return out;
@@ -459,7 +466,8 @@ final class TvPages {
         Intent go = launch;
         if (go != null) d.add(s(R.string.tv_apps_open), null, () -> host.open(go));
         boolean hidden = Profiles.hiddenApps(ctx).contains(a.pkg);
-        d.add(s(hidden ? R.string.tv_apps_show : R.string.tv_apps_hide), null, () -> Profiles.setHidden(ctx, a.pkg, !hidden));
+        d.add(s(hidden ? R.string.tv_apps_show : R.string.tv_apps_hide), null, () -> Profiles.setHidden(ctx, a.pkg,
+                !hidden));
         Intent info = SystemSettings.appInfo(ctx, a.pkg);
         if (info != null) d.add(s(R.string.tv_apps_info), null, () -> host.open(info));
         d.show();
@@ -470,19 +478,23 @@ final class TvPages {
     void storage(LinearLayout r) {
         StatFs fs = new StatFs(Environment.getDataDirectory().getPath());
         long total = fs.getTotalBytes(), free = fs.getAvailableBytes(), used = total - free;
-        r.addView(hero(R.drawable.ic_apps, 0xFFEF4444, s(R.string.tv_storage_used, Formatter.formatShortFileSize(ctx, used),
-                Formatter.formatShortFileSize(ctx, total)), s(R.string.hub_free, Formatter.formatShortFileSize(ctx, free)), null));
+        r.addView(hero(R.drawable.ic_apps, 0xFFEF4444, s(R.string.tv_storage_used, Formatter.formatShortFileSize(ctx,
+                used),
+                Formatter.formatShortFileSize(ctx, total)), s(R.string.hub_free, Formatter.formatShortFileSize(ctx,
+                        free)), null));
         FrameLayout track = new FrameLayout(ctx);
         GradientDrawable t = new GradientDrawable();
         t.setColor(0x26FFFFFF);
         t.setCornerRadius(Ui.dp(ctx, 4));
         track.setBackground(t);
         View fill = new View(ctx);
-        GradientDrawable f = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0xFFF97316, 0xFFEF4444});
+        GradientDrawable f = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0xFFF97316,
+                0xFFEF4444});
         f.setCornerRadius(Ui.dp(ctx, 4));
         fill.setBackground(f);
         int width = Ui.dp(ctx, 500);
-        track.addView(fill, new FrameLayout.LayoutParams((int) (width * Math.min(1.0, (double) used / Math.max(1, total))), Ui.dp(ctx, 8)));
+        track.addView(fill, new FrameLayout.LayoutParams((int) (width * Math.min(1.0, (double) used / Math.max(1,
+                total))), Ui.dp(ctx, 8)));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, Ui.dp(ctx, 8));
         lp.setMargins(Ui.dp(ctx, 8), Ui.dp(ctx, 6), 0, Ui.dp(ctx, 16));
         track.setLayoutParams(lp);
@@ -499,9 +511,11 @@ final class TvPages {
     void dateTime(LinearLayout r) {
         java.time.ZonedDateTime now = java.time.ZonedDateTime.now();
         java.util.TimeZone zone = java.util.TimeZone.getDefault();
-        r.addView(hero(R.drawable.ic_hub_sun, 0xFFF59E0B, android.text.format.DateFormat.getTimeFormat(ctx).format(new java.util.Date()),
+        r.addView(hero(R.drawable.ic_hub_sun, 0xFFF59E0B,
+                android.text.format.DateFormat.getTimeFormat(ctx).format(new java.util.Date()),
                 android.text.format.DateFormat.getLongDateFormat(ctx).format(new java.util.Date()), null));
-        r.addView(info(s(R.string.tv_time_zone), zone.getDisplayName(zone.inDaylightTime(new java.util.Date()), java.util.TimeZone.LONG)));
+        r.addView(info(s(R.string.tv_time_zone), zone.getDisplayName(zone.inDaylightTime(new java.util.Date()),
+                java.util.TimeZone.LONG)));
         boolean auto = Settings.Global.getInt(ctx.getContentResolver(), Settings.Global.AUTO_TIME, 1) == 1;
         r.addView(info(s(R.string.tv_time_auto), s(auto ? R.string.on : R.string.off)));
         boolean h24 = android.text.format.DateFormat.is24HourFormat(ctx);
@@ -533,7 +547,8 @@ final class TvPages {
                 }
             }
         }
-        r.addView(hero(R.drawable.ic_hub_layout, 0xFF8B5CF6, name, s(ours ? R.string.tv_keyboard_ours : R.string.tv_keyboard_other), null));
+        r.addView(hero(R.drawable.ic_hub_layout, 0xFF8B5CF6, name, s(ours ? R.string.tv_keyboard_ours
+                : R.string.tv_keyboard_other), null));
         if (imm != null) r.addView(Ui.row(ctx, s(R.string.tv_keyboard_switch), null, v -> imm.showInputMethodPicker()));
         if (!enabled) add(r, link(R.string.tv_keyboard_enable, null, Settings.ACTION_INPUT_METHOD_SETTINGS));
         r.addView(Ui.note(ctx, s(R.string.tv_keyboard_note)));
@@ -554,7 +569,8 @@ final class TvPages {
             // an empty list below
         }
         int count = paired != null ? paired.size() : 0;
-        r.addView(hero(R.drawable.ic_hub_sound, 0xFF3B82F6, s(on ? R.string.tv_bluetooth_on : R.string.tv_bluetooth_off),
+        r.addView(hero(R.drawable.ic_hub_sound, 0xFF3B82F6, s(on ? R.string.tv_bluetooth_on
+                : R.string.tv_bluetooth_off),
                 s(R.string.tv_bluetooth_paired, count), null));
         if (count > 0) {
             r.addView(Ui.header(ctx, s(R.string.tv_bluetooth_devices)));
@@ -579,7 +595,8 @@ final class TvPages {
 
     void about(LinearLayout r) {
         String model = Build.MANUFACTURER.isEmpty() ? Build.MODEL
-                : Character.toUpperCase(Build.MANUFACTURER.charAt(0)) + Build.MANUFACTURER.substring(1) + " " + Build.MODEL;
+                : Character.toUpperCase(Build.MANUFACTURER.charAt(0)) + Build.MANUFACTURER.substring(1)
+                        + " " + Build.MODEL;
         r.addView(hero(R.drawable.ic_hub_info, 0xFF3B82F6, model,
                 s(R.string.tv_about_android_value, Build.VERSION.RELEASE), null));
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -588,7 +605,8 @@ final class TvPages {
                 Formatter.formatShortFileSize(ctx, mi.availMem), Formatter.formatShortFileSize(ctx, mi.totalMem))));
         StatFs fs = new StatFs(Environment.getDataDirectory().getPath());
         r.addView(info(s(R.string.tv_about_storage), s(R.string.tv_about_memory_value,
-                Formatter.formatShortFileSize(ctx, fs.getAvailableBytes()), Formatter.formatShortFileSize(ctx, fs.getTotalBytes()))));
+                Formatter.formatShortFileSize(ctx, fs.getAvailableBytes()), Formatter.formatShortFileSize(ctx,
+                        fs.getTotalBytes()))));
         r.addView(info(s(R.string.tv_about_chip), Build.HARDWARE.toUpperCase(Locale.ROOT)));
         DisplayMetrics dm = new DisplayMetrics();
         ctx.getWindowManager().getDefaultDisplay().getRealMetrics(dm);

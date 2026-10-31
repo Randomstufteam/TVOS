@@ -26,7 +26,8 @@ final class LibraryApps {
     private LibraryApps() { }
 
     private static AtomicFile store(Context context, boolean removed) {
-        return new AtomicFile(new File(context.getFilesDir(), removed ? "library_home_removed.txt" : "library_apps.txt"));
+        return new AtomicFile(new File(context.getFilesDir(), removed
+                ? "library_home_removed.txt" : "library_apps.txt"));
     }
 
     static Set<String> load(Context context) {

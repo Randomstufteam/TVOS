@@ -44,6 +44,9 @@ tv 'cmd notification allow_listener com.gathin.tvhome/com.gathin.tvhome.WatchLis
 tv 'ime enable com.gathin.tvhome/.TvKeyboard'
 tv 'ime set com.gathin.tvhome/.TvKeyboard'
 
+# Native code ahead of time: a faster Home on a slow TV CPU. A TV that refuses simply keeps running it as before.
+tv 'cmd package compile -m speed -f com.gathin.tvhome' || true
+
 sleep 5
 tv "dumpsys accessibility | grep -E 'Bound services|Crashed'"
 echo "TVOS is installed. The old keyboard is still enabled until you have tested typing."

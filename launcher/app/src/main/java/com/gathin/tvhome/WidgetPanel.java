@@ -18,7 +18,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -75,8 +74,8 @@ final class WidgetPanel {
         // Room around the cards for the focused one's lift: Home's root clips each child to its own bounds.
         int room = Ui.dp(activity, 14);
         panel.setPadding(room, room, room, room);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.END);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(Ui.WRAP,
+                Ui.WRAP, Gravity.TOP | Gravity.END);
         lp.topMargin = Ui.dp(activity, 112) - room;
         lp.setMarginEnd(Ui.dp(activity, 56) - room);
         root.addView(panel, lp);
@@ -142,7 +141,7 @@ final class WidgetPanel {
                 row = new LinearLayout(activity);
                 row.setOrientation(LinearLayout.HORIZONTAL);
                 row.setClipChildren(false);
-                LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
                 if (i > 0) rlp.topMargin = Ui.dp(activity, 12);
                 panel.addView(row, rlp);
             }
@@ -262,7 +261,8 @@ final class WidgetPanel {
         TextView t = Ui.text(activity, activity.getString(text), 16, R.string.font_regular, Ui.TEXT);
         t.setMaxLines(2);
         col.addView(spaced(t, 12));
-        if (hint != 0) col.addView(spaced(Ui.text(activity, activity.getString(hint), 12, R.string.font_light, Ui.TEXT_FAINT), 6));
+        if (hint != 0) col.addView(spaced(Ui.text(activity, activity.getString(hint), 12, R.string.font_light,
+                Ui.TEXT_FAINT), 6));
     }
 
     private View card(String key) {
@@ -291,7 +291,7 @@ final class WidgetPanel {
             now.setGravity(Gravity.CENTER_VERTICAL);
             TextView temp = Ui.text(activity, Math.round(w.temp) + "°", 38, R.string.font_extralight, Ui.TEXT);
             temp.setLetterSpacing(-0.03f);
-            now.addView(temp, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+            now.addView(temp, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
             now.addView(Ui.text(activity, Widgets.glyph(w.code, w.day), 26, R.string.font_regular, Ui.TEXT));
             col.addView(spaced(now, 6));
             TextView line = Ui.text(activity, activity.getString(Widgets.describe(w.code)) + "  ·  "
@@ -317,9 +317,10 @@ final class WidgetPanel {
         left.addView(spaced(day, 4));
         left.addView(spaced(Ui.text(activity, today.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault())
                 + " " + today.getYear(), 12, R.string.font_light, Ui.TEXT_DIM), 2));
-        row.addView(left, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        row.addView(left, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
         // Wide enough for two-digit days in seven columns, today's disc around them included.
-        row.addView(new MonthView(activity, today), new LinearLayout.LayoutParams(Ui.dp(activity, 96), Ui.dp(activity, 92)));
+        row.addView(new MonthView(activity, today), new LinearLayout.LayoutParams(Ui.dp(activity, 96), Ui.dp(activity,
+                92)));
         f.addView(row);
         return f;
     }
@@ -422,7 +423,7 @@ final class WidgetPanel {
     }
 
     private View spaced(View v, int topDp) {
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         lp.topMargin = Ui.dp(activity, topDp);
         v.setLayoutParams(lp);
         return v;
@@ -491,7 +492,8 @@ final class WidgetPanel {
         for (int i = 0; i < notes.size(); i++) {
             int at = i;
             Widgets.Note n = notes.get(i);
-            d.add((n.done ? "✓  " : "") + n.text, activity.getString(n.done ? R.string.widget_notes_undo : R.string.widget_notes_done), () -> {
+            d.add((n.done ? "✓  " : "") + n.text, activity.getString(n.done ? R.string.widget_notes_undo
+                    : R.string.widget_notes_done), () -> {
                 List<Widgets.Note> now = Widgets.notes(activity);
                 if (at < now.size()) now.get(at).done = !now.get(at).done;
                 Widgets.saveNotes(activity, now);
@@ -545,7 +547,8 @@ final class WidgetPanel {
         Drawable known = icons.get(pkg);
         if (known != null) return known;
         try {
-            Drawable d = Ui.smallIcon(activity, activity.getPackageManager().getApplicationIcon(pkg), Ui.dp(activity, 30));
+            Drawable d = Ui.smallIcon(activity, activity.getPackageManager().getApplicationIcon(pkg), Ui.dp(activity,
+                    30));
             icons.put(pkg, d);
             return d;
         } catch (PackageManager.NameNotFoundException e) {

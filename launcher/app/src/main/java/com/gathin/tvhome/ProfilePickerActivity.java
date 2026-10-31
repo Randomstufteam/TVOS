@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -119,7 +120,7 @@ public final class ProfilePickerActivity extends Activity {
         glowNext = new View(this);
         for (View g : new View[]{glow, glowNext}) {
             g.setAlpha(0f);
-            root.addView(g, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            root.addView(g, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         }
         root.addView(topStrip());
 
@@ -138,12 +139,12 @@ public final class ProfilePickerActivity extends Activity {
         avatars.setClipChildren(false);
         avatars.setClipToPadding(false);
         avatars.setPadding(0, Ui.dp(this, 16), 0, Ui.dp(this, 12));
-        LinearLayout.LayoutParams alp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams alp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         alp.topMargin = Ui.dp(this, 14);
         column.addView(avatars, alp);
         column.addView(profileCard());
         column.addView(footer());
-        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP,
                 Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
         clp.bottomMargin = Ui.dp(this, 30);
         root.addView(column, clp);
@@ -172,16 +173,18 @@ public final class ProfilePickerActivity extends Activity {
     }
 
     private String titleText() {
-        return getString(editing ? R.string.profiles_edit_title_mode : manage ? R.string.profiles_manage_title : R.string.profiles_title);
+        return getString(editing ? R.string.profiles_edit_title_mode : manage ? R.string.profiles_manage_title
+                : R.string.profiles_title);
     }
 
-    // --- top strip: greeting, weather, clock ---------------------------------------------------------------------------
+    // --- top strip: greeting, weather, clock
+    // ---------------------------------------------------------------------------
 
     private View topStrip() {
         FrameLayout strip = new FrameLayout(this);
         int side = Ui.dp(this, 56);
         strip.setPadding(side, Ui.dp(this, 34), side, 0);
-        strip.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP));
+        strip.setLayoutParams(new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP, Gravity.TOP));
 
         LinearLayout left = new LinearLayout(this);
         left.setOrientation(LinearLayout.VERTICAL);
@@ -192,7 +195,7 @@ public final class ProfilePickerActivity extends Activity {
             w.setPadding(0, Ui.dp(this, 8), 0, 0);
             left.addView(w);
         }
-        strip.addView(left, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.START));
+        strip.addView(left, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.START));
 
         LinearLayout right = new LinearLayout(this);
         right.setOrientation(LinearLayout.VERTICAL);
@@ -206,11 +209,12 @@ public final class ProfilePickerActivity extends Activity {
         clock.setLetterSpacing(-0.03f);
         clock.setIncludeFontPadding(false);
         right.addView(clock);
-        TextView date = Ui.text(this, DateFormat.format(DateFormat.getBestDateTimePattern(java.util.Locale.getDefault(), "EEEEdMMMM"),
+        TextView date = Ui.text(this, DateFormat.format(DateFormat.getBestDateTimePattern(java.util.Locale.getDefault(),
+                "EEEEdMMMM"),
                 Calendar.getInstance()), 13, R.string.font_regular, Ui.TEXT_DIM);
         date.setPadding(0, Ui.dp(this, 6), 0, 0);
         right.addView(date);
-        strip.addView(right, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.END));
+        strip.addView(right, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.END));
         if (Motion.enabled) {
             strip.setAlpha(0f);
             strip.animate().alpha(1f).setDuration(Motion.ENTER_MS * 2L).setInterpolator(Motion.easeOut()).start();
@@ -235,7 +239,8 @@ public final class ProfilePickerActivity extends Activity {
         return null;
     }
 
-    // --- the focused profile's card ------------------------------------------------------------------------------------
+    // --- the focused profile's card
+    // ------------------------------------------------------------------------------------
 
     private View profileCard() {
         card = new LinearLayout(this);
@@ -253,7 +258,7 @@ public final class ProfilePickerActivity extends Activity {
         cardSub.setEllipsize(TextUtils.TruncateAt.END);
         cardSub.setPadding(0, Ui.dp(this, 6), 0, 0);
         text.addView(cardSub);
-        card.addView(text, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        card.addView(text, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
         cardIcons = new LinearLayout(this);
         cardIcons.setGravity(Gravity.CENTER_VERTICAL);
         card.addView(cardIcons);
@@ -268,12 +273,12 @@ public final class ProfilePickerActivity extends Activity {
         f.setGravity(Gravity.CENTER);
         f.setClipChildren(false);
         editPill = Ui.pill(this, getString(R.string.profiles_edit), v -> setEditing(!editing));
-        f.addView(editPill, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, Ui.dp(this, 40)));
-        LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        f.addView(editPill, new LinearLayout.LayoutParams(Ui.WRAP, Ui.dp(this, 40)));
+        LinearLayout.LayoutParams hl = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         hl.setMarginStart(Ui.dp(this, 22));
         f.addView(Ui.keyHint(this, getString(R.string.profiles_key_ok), getString(R.string.profiles_key_select)), hl);
         f.addView(Ui.keyHint(this, getString(R.string.profiles_key_menu), getString(R.string.profiles_key_edit)), hl);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         lp.topMargin = Ui.dp(this, 16);
         f.setLayoutParams(lp);
         return f;
@@ -353,7 +358,8 @@ public final class ProfilePickerActivity extends Activity {
                 : s.app != null ? getString(R.string.profiles_recent_app, s.app) : p.name);
         String notes = s.openNotes > 0 ? getString(R.string.profiles_notes_open, s.openNotes) : null;
         String app = s.title != null ? s.app : null;
-        cardSub.setText(app != null && notes != null ? app + "  ·  " + notes : app != null ? app : notes != null ? notes : "");
+        cardSub.setText(app != null && notes != null ? app + "  ·  " + notes : app != null ? app : notes != null ? notes
+                : "");
         int size = Ui.dp(this, 34);
         for (Drawable d : s.icons) {
             ImageView iv = new ImageView(this);
@@ -364,7 +370,8 @@ public final class ProfilePickerActivity extends Activity {
         }
     }
 
-    // --- avatars -------------------------------------------------------------------------------------------------------
+    // --- avatars
+    // -------------------------------------------------------------------------------------------------------
 
     private void buildAvatars(int focusId, boolean animate) {
         avatars.removeAllViews();
@@ -431,7 +438,7 @@ public final class ProfilePickerActivity extends Activity {
         disc.setBackground(bg);
         disc.setElevation(Ui.dp(this, 8));   // a soft round shadow under each avatar (the oval is its outline)
         TextView letter = Ui.text(this, initial, picture ? 44 : 42, R.string.font_light, Ui.TEXT);
-        disc.addView(letter, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        disc.addView(letter, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.CENTER));
         if (locked) {
             ImageView lock = new ImageView(this);
             lock.setImageResource(R.drawable.ic_lock);
@@ -450,16 +457,16 @@ public final class ProfilePickerActivity extends Activity {
         ring.setBackground(r);
         ring.setAlpha(0f);
         ring.setTag("ring");
-        disc.addView(ring, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        disc.addView(ring, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         item.addView(disc, new LinearLayout.LayoutParams(size, size));
         TextView label = Ui.text(this, name, 16, R.string.font_regular, Ui.TEXT_DIM);
         label.setTag("label");
         label.setSingleLine(true);
         label.setEllipsize(TextUtils.TruncateAt.END);
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         llp.topMargin = Ui.dp(this, 14);
         item.addView(label, llp);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.dp(this, 128), ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.dp(this, 128), Ui.WRAP);
         item.setLayoutParams(lp);
         return item;
     }
@@ -553,7 +560,8 @@ public final class ProfilePickerActivity extends Activity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    // --- edit menu -----------------------------------------------------------------------------------------------------
+    // --- edit menu
+    // -----------------------------------------------------------------------------------------------------
 
     private void openMenu(Profiles.Profile p) {
         if (!unlocked(p)) {
@@ -580,7 +588,8 @@ public final class ProfilePickerActivity extends Activity {
         panel.addView(colourChoices(p));
         View gap = new View(this);
         panel.addView(gap, new LinearLayout.LayoutParams(1, Ui.dp(this, 18)));
-        panel.addView(Ui.row(this, getString(p.hasPin() ? R.string.profiles_change_pin : R.string.profiles_set_pin), null, v -> {
+        panel.addView(Ui.row(this, getString(p.hasPin() ? R.string.profiles_change_pin : R.string.profiles_set_pin),
+                null, v -> {
             closeOverlay();
             firstNewPin = null;
             showPin(p, PinMode.NEW, null);
@@ -695,8 +704,8 @@ public final class ProfilePickerActivity extends Activity {
         TextView t = Ui.text(this, title, 22, R.string.font_light, Ui.TEXT);
         t.setPadding(Ui.dp(this, 4), 0, 0, Ui.dp(this, 14));
         panel.addView(t);
-        overlay.addView(panel, new FrameLayout.LayoutParams(Ui.dp(this, widthDp), ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        root.addView(overlay, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        overlay.addView(panel, new FrameLayout.LayoutParams(Ui.dp(this, widthDp), Ui.WRAP, Gravity.CENTER));
+        root.addView(overlay, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         // The dimming comes up quickly and the panel pops forward out of it.
         overlay.setAlpha(0f);
         Motion.fade(overlay, 1f, Motion.FAST_MS);
@@ -715,12 +724,14 @@ public final class ProfilePickerActivity extends Activity {
         View focus = avatars.getChildCount() > 0 ? avatars.getChildAt(0) : null;
         for (int i = 0; i < avatars.getChildCount(); i++) {
             Object tag = avatars.getChildAt(i).getTag();
-            if (tag instanceof Profiles.Profile && ((Profiles.Profile) tag).id == overlayFor) focus = avatars.getChildAt(i);
+            if (tag instanceof Profiles.Profile
+                    && ((Profiles.Profile) tag).id == overlayFor) focus = avatars.getChildAt(i);
         }
         if (focus != null) focus.requestFocus();
     }
 
-    // --- PIN pad -------------------------------------------------------------------------------------------------------
+    // --- PIN pad
+    // -------------------------------------------------------------------------------------------------------
 
     private void showPin(Profiles.Profile p, PinMode mode, Runnable after) {
         overlayFor = p.id;
@@ -742,12 +753,12 @@ public final class ProfilePickerActivity extends Activity {
         FrameLayout disc = new FrameLayout(this);
         disc.setBackground(Ui.avatar(p.color));
         disc.addView(Ui.text(this, p.initial(), 30, R.string.font_light, Ui.TEXT),
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+                new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.CENTER));
         int s = Ui.dp(this, 68);
         info.addView(disc, new LinearLayout.LayoutParams(s, s));
         pinPrompt = Ui.text(this, "", 18, R.string.font_light, Ui.TEXT);
         pinPrompt.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP);
         plp.topMargin = Ui.dp(this, 16);
         info.addView(pinPrompt, plp);
         dots = new LinearLayout(this);
@@ -759,15 +770,15 @@ public final class ProfilePickerActivity extends Activity {
             dl.setMargins(Ui.dp(this, 9), 0, Ui.dp(this, 9), 0);
             dots.addView(d, dl);
         }
-        LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         dlp.topMargin = Ui.dp(this, 18);
         info.addView(dots, dlp);
         pinError = Ui.text(this, "", 14, R.string.font_regular, 0xFFFF6B6B);
         pinError.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams elp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(this, 44));
+        LinearLayout.LayoutParams elp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.dp(this, 44));
         elp.topMargin = Ui.dp(this, 10);
         info.addView(pinError, elp);
-        panel.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        panel.addView(info, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
 
         GridLayout pad = new GridLayout(this);
         pad.setColumnCount(3);
@@ -793,7 +804,7 @@ public final class ProfilePickerActivity extends Activity {
             bg.addState(new int[]{}, Ui.circle(0x1FFFFFFF));
             b.setBackground(bg);
             // The key is focusable itself: its own focus turns the digit dark on the white disc.
-            b.setTextColor(new android.content.res.ColorStateList(
+            b.setTextColor(new ColorStateList(
                     new int[][]{{android.R.attr.state_focused}, {}}, new int[]{Ui.ON_FOCUS, Ui.TEXT}));
             b.setFocusable(true);
             b.setClickable(true);
@@ -804,7 +815,7 @@ public final class ProfilePickerActivity extends Activity {
             pad.addView(b, gl);
             if (first == null) first = b;
         }
-        LinearLayout.LayoutParams glp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams glp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);
         glp.setMarginStart(Ui.dp(this, 24));
         panel.addView(pad, glp);
         updatePinViews();
@@ -902,7 +913,8 @@ public final class ProfilePickerActivity extends Activity {
                 .withEndAction(() -> dots.setTranslationX(0)).start();
     }
 
-    // --- keys ----------------------------------------------------------------------------------------------------------
+    // --- keys
+    // ----------------------------------------------------------------------------------------------------------
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {

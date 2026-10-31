@@ -299,14 +299,16 @@ final class Cards {
         }
 
         XmlResourceParser xml = ai.loadXmlMetaData(pm, META_DATA);
-        if (xml == null) throw new CardException("no <meta-data android:name=\"" + META_DATA + "\" android:resource=...>");
+        if (xml == null) throw new CardException("no <meta-data android:name=\"" + META_DATA
+                + "\" android:resource=...>");
         Declared d;
         try {
             d = parse(xml);
         } finally {
             xml.close();
         }
-        if (d.spec != SPEC_SUPPORTED) throw new CardException("spec " + d.spec + " is not supported (this launcher reads spec " + SPEC_SUPPORTED + ")");
+        if (d.spec != SPEC_SUPPORTED) throw new CardException("spec " + d.spec
+                + " is not supported (this launcher reads spec " + SPEC_SUPPORTED + ")");
 
         String digest = digest(pm, pkg);
         String folded = fold(d.label);
@@ -323,9 +325,11 @@ final class Cards {
         // A decided card that changes its label becomes pending again (RELABELLED), so it cannot take
         // another app's name on an update either.
         if (isReserved(folded, uiNames)) throw new CardException("label '" + d.label + "' is reserved");
-        if (pending && isTaken(folded, pkg, names)) throw new CardException("label '" + d.label + "' is the name of another installed app");
+        if (pending && isTaken(folded, pkg, names)) throw new CardException("label '" + d.label
+                + "' is the name of another installed app");
         String appLabel = cleanLabel(String.valueOf(ai.applicationInfo.loadLabel(pm)), pkg);
-        if (pending && isTaken(fold(appLabel), pkg, names)) throw new CardException("app label '" + appLabel + "' is the name of another installed app");
+        if (pending && isTaken(fold(appLabel), pkg, names)) throw new CardException("app label '" + appLabel
+                + "' is the name of another installed app");
 
         return new Card(pkg, component, d.label, appLabel, d.caption, d.accent, digest, state);
     }
@@ -421,7 +425,8 @@ final class Cards {
         }
         // Lengths first, before any pattern or comparison touches the value.
         // The compiler stores spec="1" as an integer; the parser hands it back as the decimal text "1".
-        if (spec == null || spec.isEmpty() || spec.length() > 3 || !isDigits(spec)) throw new CardException("spec is missing or not a small integer");
+        if (spec == null || spec.isEmpty() || spec.length() > 3
+                || !isDigits(spec)) throw new CardException("spec is missing or not a small integer");
         String reason = checkLabel(label);
         if (reason != null) throw new CardException(reason);
         reason = checkCaption(caption);
@@ -432,7 +437,8 @@ final class Cards {
             colour = parseAccent(accent);
             if (colour == 0) throw new CardException("accent is not #RRGGBB");
         }
-        return new Declared(Integer.parseInt(spec), label, caption == null || caption.isEmpty() ? null : caption, colour);
+        return new Declared(Integer.parseInt(spec), label, caption == null || caption.isEmpty() ? null : caption,
+                colour);
     }
 
     // ---- validators (pure Java, unit tested) -----------------------------------------------------
@@ -456,7 +462,8 @@ final class Cards {
         if (!isText(caption)) return "caption has characters outside A-Z a-z 0-9 space . & + ' -";
         if (caption.charAt(0) == ' ' || caption.charAt(caption.length() - 1) == ' ') return "caption starts or ends with a space";
         String folded = fold(caption);
-        for (String word : RESERVED_ANYWHERE) if (folded.contains(word)) return "caption claims endorsement ('" + word + "')";
+        for (String word : RESERVED_ANYWHERE) if (folded.contains(word)) return "caption claims endorsement ('" + word
+                + "')";
         return null;
     }
 
@@ -472,7 +479,8 @@ final class Cards {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             int type = Character.getType(c);
-            boolean blank = c == ' ' || Character.isISOControl(c) || Character.isWhitespace(c) || type == Character.FORMAT
+            boolean blank = c == ' ' || Character.isISOControl(c) || Character.isWhitespace(c)
+                    || type == Character.FORMAT
                     || type == Character.LINE_SEPARATOR || type == Character.PARAGRAPH_SEPARATOR
                     || type == Character.SPACE_SEPARATOR;
             if (blank) {
@@ -480,7 +488,8 @@ final class Cards {
                 space = true;
                 continue;
             }
-            boolean pair = Character.isHighSurrogate(c) && i + 1 < s.length() && Character.isLowSurrogate(s.charAt(i + 1));
+            boolean pair = Character.isHighSurrogate(c) && i + 1 < s.length() && Character.isLowSurrogate(s.charAt(i
+                    + 1));
             if (b.length() + (pair ? 2 : 1) > 40) break;
             b.append(c);
             if (pair) b.append(s.charAt(++i));
@@ -579,7 +588,8 @@ final class Cards {
             i++;
             while (i < s.length() && s.charAt(i) != '.') {
                 c = s.charAt(i);
-                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_')) return false;
+                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+                        || c == '_')) return false;
                 i++;
             }
             segments++;
@@ -654,7 +664,8 @@ final class Cards {
             sigs = pi.signatures;
         }
         if (sigs == null || sigs.length != 1) {
-            throw new CardException("package has " + (sigs == null ? 0 : sigs.length) + " signing certificates, expected one");
+            throw new CardException("package has " + (sigs == null ? 0 : sigs.length)
+                    + " signing certificates, expected one");
         }
         return hex(MessageDigest.getInstance("SHA-256").digest(sigs[0].toByteArray()));
     }
@@ -709,11 +720,14 @@ final class Cards {
         Record old = records.get(card.pkg);
         long now = System.currentTimeMillis();
         long firstSeen = old != null && old.digest.equals(card.digest) ? old.firstSeen : now;
-        records.put(card.pkg, new Record(card.pkg, card.digest, fold(card.label), show ? DECISION_SHOW : DECISION_HIDE, firstSeen, now));
+        records.put(card.pkg, new Record(card.pkg, card.digest, fold(card.label), show ? DECISION_SHOW : DECISION_HIDE,
+                firstSeen, now));
         return save(file, records);
     }
 
-    /** Moves a bad decision file to `<name>.bad`, replacing an older .bad. Returns true when the file is out of the way. */
+    /**
+     * Moves a bad decision file to `<name>.bad`, replacing an older .bad. Returns true when the file is out of the way.
+     */
     static boolean quarantine(File file) {
         File bad = new File(file.getParentFile(), file.getName() + ".bad");
         if (bad.exists() && !bad.delete()) return false;
@@ -793,7 +807,10 @@ final class Cards {
         return true;
     }
 
-    /** The text from the cursor up to the next stop character, which stays for the next literal; null when there is none. */
+    /**
+     * The text from the cursor up to the next stop character, which stays for the next literal; null when there is
+     * none.
+     */
     private static String until(String s, int[] at, char stop) {
         int end = s.indexOf(stop, at[0]);
         if (end < 0) return null;
@@ -802,7 +819,10 @@ final class Cards {
         return out;
     }
 
-    /** The decision file text for these records, by package; the oldest decisions are dropped beyond {@link #MAX_RECORDS}. */
+    /**
+     * The decision file text for these records, by package; the oldest decisions are dropped beyond {@link
+     * #MAX_RECORDS}.
+     */
     static String encode(Map<String, Record> records) {
         List<Record> list = new ArrayList<>(records.values());
         if (list.size() > MAX_RECORDS) {

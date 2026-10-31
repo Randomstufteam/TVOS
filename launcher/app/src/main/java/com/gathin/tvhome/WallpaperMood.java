@@ -38,7 +38,8 @@ final class WallpaperMood {
         int[] times = null;
         try {
             if (!latitude.trim().isEmpty() && !longitude.trim().isEmpty()) {
-                times = Sun.riseAndSet(day, Double.parseDouble(latitude.trim()), Double.parseDouble(longitude.trim()), zone);
+                times = Sun.riseAndSet(day, Double.parseDouble(latitude.trim()), Double.parseDouble(longitude.trim()),
+                        zone);
             }
         } catch (NumberFormatException ignored) {
             // not a number: the defaults

@@ -50,7 +50,8 @@ public final class TvKeyboard extends InputMethodService {
         Key[][] out = new Key[top.length + 1][];
         for (int r = 0; r < top.length; r++) {
             out[r] = new Key[top[r].length()];
-            for (int c = 0; c < top[r].length(); c++) out[r][c] = new Key(top[r].charAt(c), String.valueOf(top[r].charAt(c)), 1);
+            for (int c = 0; c < top[r].length(); c++) out[r][c] = new Key(top[r].charAt(c),
+                    String.valueOf(top[r].charAt(c)), 1);
         }
         CharSequence action = actionLabel();
         out[top.length] = new Key[]{
@@ -176,7 +177,8 @@ public final class TvKeyboard extends InputMethodService {
     }
 
     private boolean ours(int code) {
-        return isInputViewShown() && keys != null && view != null && (code == KeyEvent.KEYCODE_DPAD_UP || code == KeyEvent.KEYCODE_DPAD_DOWN
+        return isInputViewShown() && keys != null && view != null && (code == KeyEvent.KEYCODE_DPAD_UP
+                || code == KeyEvent.KEYCODE_DPAD_DOWN
                 || code == KeyEvent.KEYCODE_DPAD_LEFT || code == KeyEvent.KEYCODE_DPAD_RIGHT
                 || code == KeyEvent.KEYCODE_DPAD_CENTER || code == KeyEvent.KEYCODE_ENTER);
     }

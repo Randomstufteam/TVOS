@@ -315,7 +315,10 @@ final class RemoteKeys {
         return heldMs >= HOLD_MS && holdApp != null ? holdApp : app;
     }
 
-    /** The TV input id of an "input:<id>" target, e.g. "input:com.tcl.tvinput/.passthroughinput.TvPassThroughService/HW1413743104"; null for a package. */
+    /**
+     * The TV input id of an "input:<id>" target, e.g.
+     * "input:com.tcl.tvinput/.passthroughinput.TvPassThroughService/HW1413743104"; null for a package.
+     */
     static String inputId(String target) {
         if (target == null || !target.startsWith("input:")) return null;
         String id = target.substring("input:".length()).trim();
@@ -370,7 +373,8 @@ final class RemoteKeys {
                 // launcher's own clock where the firmware has no such shortcut.
                 Intent dream = new Intent(Intent.ACTION_MAIN)
                         .setClassName("com.android.systemui", "com.android.systemui.Somnambulator");
-                if (ctx.getPackageManager().resolveActivity(dream, 0) == null) dream = new Intent(ctx, ClockActivity.class);
+                if (ctx.getPackageManager().resolveActivity(dream, 0) == null) dream = new Intent(ctx,
+                        ClockActivity.class);
                 start(ctx, dream);
                 break;
             case "settings":

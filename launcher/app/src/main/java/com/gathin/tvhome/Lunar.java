@@ -33,7 +33,8 @@ final class Lunar {
         String month = l[3] == 1 ? res.getString(R.string.lunar_month_leap, l[1]) : String.valueOf(l[1]);
         String[] stems = res.getStringArray(R.array.lunar_stems);
         String[] branches = res.getStringArray(R.array.lunar_branches);
-        String year = res.getString(R.string.lunar_year, stems[Math.floorMod(l[2] + 6, 10)], branches[Math.floorMod(l[2] + 8, 12)]);
+        String year = res.getString(R.string.lunar_year, stems[Math.floorMod(l[2] + 6, 10)], branches[Math.floorMod(l[2]
+                + 8, 12)]);
         return res.getString(R.string.lunar_date_format, l[0], month, year);
     }
 

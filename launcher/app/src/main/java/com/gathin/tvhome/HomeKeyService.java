@@ -92,7 +92,10 @@ public class HomeKeyService extends AccessibilityService {
     private boolean powerOnAlways;
     /** power_on_home: re-arms after the screen turns on; null unless the key is on. */
     private BroadcastReceiver screenOnReceiver;
-    /** Stops key filtering while a game controller is connected; null unless gamepad_passthrough and key_filter, or before the unlock. */
+    /**
+     * Stops key filtering while a game controller is connected; null unless gamepad_passthrough and key_filter, or
+     * before the unlock.
+     */
     private GamepadPassthrough gamepads;
     /** Screen-off receiver while guard_off_in_standby is set; null otherwise. */
     private BroadcastReceiver standbyExit;
@@ -212,7 +215,8 @@ public class HomeKeyService extends AccessibilityService {
         stockHomePackage = config.stockHomeRedirect;
         if (!config.stockHomeRedirect.isEmpty()) {
             Intent home = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).setPackage(config.stockHomeRedirect);
-            for (ResolveInfo ri : getPackageManager().queryIntentActivities(home, PackageManager.MATCH_DISABLED_COMPONENTS)) {
+            for (ResolveInfo ri : getPackageManager().queryIntentActivities(home,
+                    PackageManager.MATCH_DISABLED_COMPONENTS)) {
                 stockHome.add(ri.activityInfo.name);
             }
         }
@@ -266,7 +270,8 @@ public class HomeKeyService extends AccessibilityService {
     protected boolean onKeyEvent(KeyEvent event) {
         // Whatever goes wrong in here, the key goes on to Android: a crashed key filter leaves the remote stuck.
         try {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && android.util.Log.isLoggable(KEYS_TAG, android.util.Log.DEBUG)) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && android.util.Log.isLoggable(KEYS_TAG,
+                    android.util.Log.DEBUG)) {
                 // Which code a remote button arrives as: setprop log.tag.TvHome.Keys DEBUG, then logcat -s TvHome.Keys.
                 android.util.Log.d(KEYS_TAG, "keycode=" + event.getKeyCode() + " scancode=" + event.getScanCode());
             }
@@ -326,7 +331,8 @@ public class HomeKeyService extends AccessibilityService {
 
     private void handleWindowEvent(AccessibilityEvent event) {
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return;
-        // app_keys "front:" entries: only activities count, so a toast or the volume bar doesn't change the app in front.
+        // app_keys "front:" entries: only activities count, so a toast or the volume bar doesn't change the app in
+        // front.
         if ((!frontAppKeys.isEmpty() || !frontAppScancodes.isEmpty())
                 && event.getPackageName() != null && event.getClassName() != null
                 && isActivity(event.getPackageName(), event.getClassName())) {
@@ -381,7 +387,8 @@ public class HomeKeyService extends AccessibilityService {
         try {
             boolean stockInFront = false;
             for (android.view.accessibility.AccessibilityWindowInfo w : getWindows()) {
-                if (w.getType() == android.view.accessibility.AccessibilityWindowInfo.TYPE_APPLICATION && w.isFocused()) {
+                if (w.getType() == android.view.accessibility.AccessibilityWindowInfo.TYPE_APPLICATION
+                        && w.isFocused()) {
                     android.view.accessibility.AccessibilityNodeInfo root = w.getRoot();
                     if (root != null) {
                         CharSequence pkg = root.getPackageName();

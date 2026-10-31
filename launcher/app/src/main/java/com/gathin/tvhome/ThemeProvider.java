@@ -27,7 +27,8 @@ public class ThemeProvider extends ContentProvider {
         if (dir == null || path == null) throw new FileNotFoundException(String.valueOf(uri));
         File f = new File(dir, path);
         File parent = f.getParentFile();
-        if (parent != null && !parent.isDirectory() && !parent.mkdirs()) throw new FileNotFoundException(String.valueOf(uri));
+        if (parent != null && !parent.isDirectory()
+                && !parent.mkdirs()) throw new FileNotFoundException(String.valueOf(uri));
         return f;
     }
 
@@ -45,7 +46,8 @@ public class ThemeProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         File dir = Config.dir(getContext());
         if (dir != null && ThemeFiles.isCollection(uri.getPathSegments())) {
-            File[] images = new File(dir, ThemeFiles.WALLPAPERS).listFiles((d, name) -> ThemeFiles.collectionImage(name));
+            File[] images = new File(dir, ThemeFiles.WALLPAPERS).listFiles((d,
+                    name) -> ThemeFiles.collectionImage(name));
             int n = 0;
             if (images != null) for (File f : images) if (f.delete()) n++;
             return n;

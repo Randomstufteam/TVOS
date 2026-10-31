@@ -146,7 +146,8 @@ final class AppLibraryDialog {
      *  setups are unaffected. See LibraryApps.excludedFromCatalog(). */
     private final Set<String> excludedApps;
 
-    AppLibraryDialog(Activity activity, boolean animations, boolean reducedMotion, boolean selectionMode, boolean okOpens, Predicate<String> onHome, Runnable changed, Runnable dismissed, Set<String> excludedApps) {
+    AppLibraryDialog(Activity activity, boolean animations, boolean reducedMotion, boolean selectionMode,
+            boolean okOpens, Predicate<String> onHome, Runnable changed, Runnable dismissed, Set<String> excludedApps) {
         this.activity = activity;
         this.animations = animations;
         this.rtl = activity.getResources().getBoolean(R.bool.rtl_app_grid);
@@ -230,11 +231,13 @@ final class AppLibraryDialog {
             try {
                 // Prefer the TV entry when an app declares both categories.
                 for (String category : new String[]{Intent.CATEGORY_LEANBACK_LAUNCHER, Intent.CATEGORY_LAUNCHER}) {
-                    for (ResolveInfo info : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
+                    for (ResolveInfo info
+                            : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
                         if (info.activityInfo == null || !info.activityInfo.exported) continue;
                         String pkg = info.activityInfo.packageName;
                         if (Intent.CATEGORY_LEANBACK_LAUNCHER.equals(category)) tv.add(pkg);
-                        if (!pkg.equals(self) && !LibraryApps.excludedFromCatalog(excludedApps, pkg) && !unique.containsKey(pkg)) unique.put(pkg, info);
+                        if (!pkg.equals(self) && !LibraryApps.excludedFromCatalog(excludedApps, pkg)
+                                && !unique.containsKey(pkg)) unique.put(pkg, info);
                     }
                 }
             } catch (RuntimeException unavailable) {
@@ -529,7 +532,7 @@ final class AppLibraryDialog {
         if (spring != null) spring.cancel();
         View menuPanel = activity.getLayoutInflater().inflate(R.layout.popup_inputs, panel, false);
         LinearLayout rows = menuPanel.findViewById(R.id.rows);
-        PopupWindow menu = new PopupWindow(menuPanel, dp(220), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        PopupWindow menu = new PopupWindow(menuPanel, dp(220), Ui.WRAP, true);
         actionPopup = menu;
         menu.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         menu.setOutsideTouchable(true);
@@ -555,20 +558,24 @@ final class AppLibraryDialog {
         int menuWidth = dp(220);
         for (int i = 0; i < rows.getChildCount(); i++) {
             TextView title = rows.getChildAt(i).findViewById(R.id.title);
-            menuWidth = Math.max(menuWidth, (int) Math.ceil(title.getPaint().measureText(title.getText().toString())) + dp(58));
+            menuWidth = Math.max(menuWidth, (int) Math.ceil(title.getPaint().measureText(title.getText().toString()))
+                    + dp(58));
             title.setEllipsize(TextUtils.TruncateAt.END);
         }
         menuWidth = Math.min(menuWidth, panel.getWidth() - dp(24));
         menu.setWidth(menuWidth);
-        menuPanel.measure(View.MeasureSpec.makeMeasureSpec(menuWidth, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
+        menuPanel.measure(View.MeasureSpec.makeMeasureSpec(menuWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.UNSPECIFIED);
         int[] location = new int[2];
         anchor.getLocationOnScreen(location);
         int[] panelLocation = new int[2];
         panel.getLocationOnScreen(panelLocation);
         Rect screen = new Rect(panelLocation[0], panelLocation[1],
                 panelLocation[0] + panel.getWidth(), panelLocation[1] + panel.getHeight());
-        int x = Math.max(screen.left + dp(12), Math.min(location[0] + anchor.getWidth() - dp(12), screen.right - menuWidth - dp(12)));
-        int y = Math.max(screen.top + dp(12), Math.min(location[1] + dp(8), screen.bottom - menuPanel.getMeasuredHeight() - dp(12)));
+        int x = Math.max(screen.left + dp(12), Math.min(location[0] + anchor.getWidth() - dp(12),
+                screen.right - menuWidth - dp(12)));
+        int y = Math.max(screen.top + dp(12), Math.min(location[1] + dp(8),
+                screen.bottom - menuPanel.getMeasuredHeight() - dp(12)));
         menuPanel.setAlpha(0f);
         menuPanel.setPivotY(0f);
         menuPanel.setScaleY(0.92f);
@@ -657,7 +664,8 @@ final class AppLibraryDialog {
             TextView status = holder.itemView.findViewById(R.id.status);
             boolean home = onHome.test(pkg);
             boolean recent = !selectionMode && LibraryApps.recent(installTimes.getOrDefault(pkg, 0L), catalogTime);
-            status.setText(home ? R.string.library_on_home : recent ? R.string.library_recent : R.string.library_add_home);
+            status.setText(home ? R.string.library_on_home : recent ? R.string.library_recent
+                    : R.string.library_add_home);
             status.setVisibility(home || !okOpens ? View.VISIBLE : View.INVISIBLE);
             holder.itemView.setBackground(surface(home ? 0x1475BBA4 : 0x0CFFFFFF, 18));
             View check = holder.itemView.findViewById(R.id.dot);
@@ -686,7 +694,8 @@ final class AppLibraryDialog {
                 return event.getAction() == KeyEvent.ACTION_DOWN && (key == KeyEvent.KEYCODE_DPAD_UP
                         || key == KeyEvent.KEYCODE_DPAD_DOWN
                         || (rtl ? key == KeyEvent.KEYCODE_DPAD_RIGHT : key == KeyEvent.KEYCODE_DPAD_LEFT) && index == 0
-                        || (rtl ? key == KeyEvent.KEYCODE_DPAD_LEFT : key == KeyEvent.KEYCODE_DPAD_RIGHT) && index == apps.size() - 1);
+                        || (rtl ? key == KeyEvent.KEYCODE_DPAD_LEFT : key == KeyEvent.KEYCODE_DPAD_RIGHT)
+                                && index == apps.size() - 1);
             });
         }
         @Override public int getItemCount() { return apps.size(); }

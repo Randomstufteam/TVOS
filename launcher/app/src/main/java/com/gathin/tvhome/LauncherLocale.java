@@ -17,7 +17,10 @@ final class LauncherLocale {
     private LauncherLocale() {
     }
 
-    /** The Locale for a config tag such as "vi", "pt-BR" or "ar-EG-u-nu-latn", or null for "" or anything that is not a plain tag. */
+    /**
+     * The Locale for a config tag such as "vi", "pt-BR" or "ar-EG-u-nu-latn", or null for "" or anything that is not a
+     * plain tag.
+     */
     static Locale parse(String tag) {
         if (tag == null || !TAG.matcher(tag.trim()).matches()) return null;
         return Locale.forLanguageTag(tag.trim());
@@ -25,7 +28,7 @@ final class LauncherLocale {
 
     /** base with the configured language, or base itself when locale is off. */
     static Context wrap(Context base) {
-        Locale locale = parse(Config.load(base).locale);
+        Locale locale = parse(Config.localeTag(base));
         if (locale == null) return base;
         // Formatters that take no Context (the clock's date, the lunar line) follow the default locale.
         Locale.setDefault(locale);

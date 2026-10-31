@@ -12,8 +12,10 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +24,7 @@ import android.os.Looper;
 import android.os.Process;
 import android.os.StatFs;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.format.Formatter;
 import android.view.Gravity;
@@ -32,6 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -199,7 +203,7 @@ public final class SettingsHubActivity extends Activity {
         categories.add(new Category(R.string.hub_apps, R.drawable.ic_apps, 0xFFEF4444, this::appsPage));
         categories.add(new Category(R.string.hub_system, R.drawable.ic_hub_info, 0xFF94A3B8, this::systemPage));
         for (Category c : categories) side.addView(categoryRow(c));
-        root.addView(side, new FrameLayout.LayoutParams(Ui.dp(this, 300), ViewGroup.LayoutParams.MATCH_PARENT));
+        root.addView(side, new FrameLayout.LayoutParams(Ui.dp(this, 300), Ui.MATCH));
 
         Pane content = new Pane(this) {
             @Override
@@ -224,12 +228,12 @@ public final class SettingsHubActivity extends Activity {
         pageTitle = Ui.text(this, "", 28, R.string.font_light, Ui.TEXT);
         pageTitle.setLetterSpacing(-0.01f);
         heading.addView(pageTitle);
-        head.addView(heading, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.START));
-        android.widget.TextClock clock = new android.widget.TextClock(this);
+        head.addView(heading, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.BOTTOM | Gravity.START));
+        TextClock clock = new TextClock(this);
         clock.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 15);
         clock.setTextColor(Ui.TEXT_DIM);
         clock.setTypeface(UiFont.get(this, R.string.font_regular));
-        head.addView(clock, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.END));
+        head.addView(clock, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.BOTTOM | Gravity.END));
         content.addView(head);
 
         scroll = Ui.centeringScroll(this);
@@ -243,14 +247,15 @@ public final class SettingsHubActivity extends Activity {
         rows.setPadding(Ui.dp(this, 10), 0, Ui.dp(this, 10), 0);
         rows.setClipToPadding(false);
         scroll.addView(rows);
-        content.addView(scroll, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
-        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        content.addView(scroll, new LinearLayout.LayoutParams(Ui.MATCH, 0, 1));
+        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH);
         clp.leftMargin = Ui.dp(this, 300);
         clp.rightMargin = Ui.dp(this, 28);
         root.addView(content, clp);
         setContentView(root);
         Motion.enter(side, 0, -14, 0);
-        Category opening = categories.get(Math.max(0, Math.min(categories.size() - 1, getIntent().getIntExtra(EXTRA_CATEGORY, 0))));
+        Category opening = categories.get(Math.max(0, Math.min(categories.size() - 1,
+                getIntent().getIntExtra(EXTRA_CATEGORY, 0))));
         select(opening, false);
         // After the first layout: requested now, the window's first traversal hands focus to the profile row above.
         View first = opening.row;
@@ -268,7 +273,7 @@ public final class SettingsHubActivity extends Activity {
         whoDisc = new FrameLayout(this);
         whoDisc.setBackground(Ui.avatar(me.color));
         whoLetter = Ui.text(this, me.initial(), 20, R.string.font_light, Ui.TEXT);
-        whoDisc.addView(whoLetter, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        whoDisc.addView(whoLetter, new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.CENTER));
         who.addView(whoDisc, new LinearLayout.LayoutParams(Ui.dp(this, 42), Ui.dp(this, 42)));
         LinearLayout names = new LinearLayout(this);
         names.setOrientation(LinearLayout.VERTICAL);
@@ -283,9 +288,10 @@ public final class SettingsHubActivity extends Activity {
         sub.setPadding(0, Ui.dp(this, 3), 0, 0);
         names.addView(sub);
         who.addView(names);
-        who.setOnClickListener(v -> startActivity(new Intent(this, ProfilePickerActivity.class).putExtra(ProfilePickerActivity.EXTRA_MANAGE, true)));
+        who.setOnClickListener(v -> startActivity(new Intent(this,
+                ProfilePickerActivity.class).putExtra(ProfilePickerActivity.EXTRA_MANAGE, true)));
         who.setOnFocusChangeListener((v, has) -> Motion.focus(v, has, 1.02f, Ui.dp(this, 6)));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP);
         lp.bottomMargin = Ui.dp(this, 16);
         who.setLayoutParams(lp);
         return who;
@@ -296,7 +302,7 @@ public final class SettingsHubActivity extends Activity {
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setFocusable(true);
         row.setClickable(true);
-        android.graphics.drawable.StateListDrawable bg = new android.graphics.drawable.StateListDrawable();
+        StateListDrawable bg = new StateListDrawable();
         GradientDrawable on = new GradientDrawable();
         on.setColor(Ui.FOCUS);
         on.setCornerRadius(Ui.dp(this, 14));
@@ -305,13 +311,13 @@ public final class SettingsHubActivity extends Activity {
         chosen.setCornerRadius(Ui.dp(this, 14));
         bg.addState(new int[]{android.R.attr.state_focused}, on);
         bg.addState(new int[]{android.R.attr.state_activated}, chosen);
-        bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(0));
+        bg.addState(new int[]{}, new ColorDrawable(0));
         row.setBackground(bg);
         row.setPadding(Ui.dp(this, 10), 0, Ui.dp(this, 12), 0);
         TextView t = Ui.text(this, getString(c.title), 16, R.string.font_regular, Ui.TEXT);
         t.setSingleLine(true);
         Ui.textFocus(t, Ui.TEXT);
-        row.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        row.addView(t, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
         Ui.withIcon(row, c.icon, c.color);
         row.setPadding(Ui.dp(this, 8), 0, Ui.dp(this, 12), 0);
         row.setOnClickListener(v -> {
@@ -326,7 +332,7 @@ public final class SettingsHubActivity extends Activity {
             pending = c;
             if (c != current) handler.postDelayed(applyPending, PREVIEW_DELAY_MS);
         });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(this, 46));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.dp(this, 46));
         lp.bottomMargin = Ui.dp(this, 4);
         row.setLayoutParams(lp);
         c.row = row;
@@ -449,7 +455,8 @@ public final class SettingsHubActivity extends Activity {
         groupRows();
         List<View> focusable = focusables();
         if (focusIndex != NO_FOCUS) {
-            View v = focusable.isEmpty() ? current.row : focusable.get(focusIndex < 0 ? 0 : Math.min(focusIndex, focusable.size() - 1));
+            View v = focusable.isEmpty() ? current.row : focusable.get(focusIndex < 0 ? 0 : Math.min(focusIndex,
+                    focusable.size() - 1));
             v.post(() -> {
                 side.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
                 v.requestFocus();
@@ -500,8 +507,8 @@ public final class SettingsHubActivity extends Activity {
                 group.setPadding(pad, pad, pad, pad);
                 group.setClipChildren(false);
                 group.setClipToPadding(false);
-                LinearLayout.LayoutParams glp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams glp = new LinearLayout.LayoutParams(Ui.MATCH,
+                        Ui.WRAP);
                 glp.bottomMargin = Ui.dp(this, 10);
                 rows.addView(group, glp);
             } else {
@@ -519,7 +526,7 @@ public final class SettingsHubActivity extends Activity {
         line.setBackgroundColor(0x14FFFFFF);
         boolean icon = nextRow instanceof ViewGroup && ((ViewGroup) nextRow).getChildCount() > 0
                 && !(((ViewGroup) nextRow).getChildAt(0) instanceof TextView);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, Ui.dp(this, 1)));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Math.max(1, Ui.dp(this, 1)));
         lp.setMarginStart(Ui.dp(this, icon ? 62 : 22));
         lp.setMarginEnd(Ui.dp(this, 18));
         line.setLayoutParams(lp);
@@ -561,7 +568,8 @@ public final class SettingsHubActivity extends Activity {
         int pad = Ui.dp(this, 14);
         t.setPadding(pad, pad, pad, Ui.dp(this, 12));
         FrameLayout tile = new FrameLayout(this);
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{Ui.lighten(color, 0.18f), Ui.darken(color, 0.12f)});
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{Ui.lighten(color,
+                0.18f), Ui.darken(color, 0.12f)});
         bg.setCornerRadius(Ui.dp(this, 8));
         tile.setBackground(bg);
         ImageView glyph = new ImageView(this);
@@ -571,7 +579,7 @@ public final class SettingsHubActivity extends Activity {
         t.addView(tile, new LinearLayout.LayoutParams(Ui.dp(this, 28), Ui.dp(this, 28)));
         TextView v = Ui.text(this, value, 17, R.string.font_regular, Ui.TEXT);
         v.setSingleLine(true);
-        v.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        v.setEllipsize(TextUtils.TruncateAt.END);
         Ui.textFocus(v, Ui.TEXT);
         v.setPadding(0, Ui.dp(this, 12), 0, 0);
         t.addView(v);
@@ -590,7 +598,7 @@ public final class SettingsHubActivity extends Activity {
     private LinearLayout statRow() {
         LinearLayout row = new LinearLayout(this);
         row.setClipChildren(false);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP);
         lp.bottomMargin = Ui.dp(this, 10);
         row.setLayoutParams(lp);
         return row;
@@ -601,7 +609,8 @@ public final class SettingsHubActivity extends Activity {
         Widgets.Weather w = Widgets.cachedWeather(this);
         String city = Widgets.city(this);
         LinearLayout one = statRow();
-        one.addView(stat(R.drawable.ic_wifi, 0xFF3B82F6, getString(R.string.hub_stat_network), pages.networkSummary(), v -> goTo(4, 0, null)));
+        one.addView(stat(R.drawable.ic_wifi, 0xFF3B82F6, getString(R.string.hub_stat_network), pages.networkSummary(),
+                v -> goTo(4, 0, null)));
         one.addView(stat(R.drawable.ic_hub_sun, 0xFFF59E0B, getString(R.string.widget_weather),
                 w != null ? Math.round(w.temp) + "°  " + city : getString(R.string.hub_not_set),
                 v -> startActivity(new Intent(this, WeatherActivity.class))));
@@ -614,7 +623,8 @@ public final class SettingsHubActivity extends Activity {
         two.addView(stat(R.drawable.ic_apps, 0xFFEF4444, getString(R.string.hub_stat_storage),
                 getString(R.string.hub_free, Formatter.formatShortFileSize(this, fs.getAvailableBytes())),
                 v -> goTo(6, R.string.hub_storage, pages::storage)));
-        two.addView(stat(R.drawable.ic_hub_moon, 0xFF6366F1, getString(R.string.hub_screensaver), getString(Scenes.nameOf(Scenes.chosen(this))),
+        two.addView(stat(R.drawable.ic_hub_moon, 0xFF6366F1, getString(R.string.hub_screensaver),
+                getString(Scenes.nameOf(Scenes.chosen(this))),
                 v -> goTo(1, R.string.hub_screensaver, this::screensaverPage)));
         r.addView(two);
     }
@@ -630,7 +640,8 @@ public final class SettingsHubActivity extends Activity {
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();
         }), R.drawable.ic_hub_layout, 0xFF0EA5E9));
-        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_hidden), String.valueOf(Profiles.hiddenApps(this).size()),
+        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_hidden),
+                String.valueOf(Profiles.hiddenApps(this).size()),
                 v -> push(getString(R.string.hub_hidden), this::hiddenPage)), R.drawable.ic_hub_eye, 0xFF64748B));
         // A switch, not a page: no chevron, but its space is kept so the value lines up with the rows around it.
         LinearLayout dark = Ui.navRow(this, getString(R.string.dark_mode), getString(DarkMode.label(this)), v -> {
@@ -639,8 +650,10 @@ public final class SettingsHubActivity extends Activity {
         });
         dark.getChildAt(dark.getChildCount() - 1).setVisibility(View.INVISIBLE);
         r.addView(Ui.withIcon(dark, R.drawable.ic_hub_contrast, 0xFF334155));
-        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_screensaver), getString(Scenes.nameOf(Scenes.chosen(this))),
-                v -> push(getString(R.string.hub_screensaver), this::screensaverPage)), R.drawable.ic_hub_moon, 0xFF6366F1));
+        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_screensaver),
+                getString(Scenes.nameOf(Scenes.chosen(this))),
+                v -> push(getString(R.string.hub_screensaver), this::screensaverPage)), R.drawable.ic_hub_moon,
+                        0xFF6366F1));
     }
 
     private void appsPage(LinearLayout r) {
@@ -650,7 +663,8 @@ public final class SettingsHubActivity extends Activity {
         }), R.drawable.ic_apps, 0xFFEF4444));
         r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_running), freeMemory(),
                 v -> push(getString(R.string.hub_running), this::runningPage)), R.drawable.ic_hub_speed, 0xFF10B981));
-        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_hidden), String.valueOf(Profiles.hiddenApps(this).size()),
+        r.addView(Ui.withIcon(Ui.navRow(this, getString(R.string.hub_hidden),
+                String.valueOf(Profiles.hiddenApps(this).size()),
                 v -> push(getString(R.string.hub_hidden), this::hiddenPage)), R.drawable.ic_hub_eye, 0xFF64748B));
     }
 
@@ -704,12 +718,14 @@ public final class SettingsHubActivity extends Activity {
             int at = shown.indexOf(key);
             String detail = at < 0 ? getString(R.string.hub_off) : getString(R.string.hub_widget_place, at + 1);
             View row = Ui.row(this, getString(widgetName(key)), detail, v -> {
-                if (!Widgets.toggle(this, key)) Toast.makeText(this, getString(R.string.hub_widgets_full, Widgets.MAX_SHOWN), Toast.LENGTH_SHORT).show();
+                if (!Widgets.toggle(this, key)) Toast.makeText(this, getString(R.string.hub_widgets_full,
+                        Widgets.MAX_SHOWN), Toast.LENGTH_SHORT).show();
                 show(stack.peek(), false);
             });
             // Menu moves a shown widget one place earlier, so the four can be arranged.
             row.setOnKeyListener((v, code, e) -> {
-                if (code != KeyEvent.KEYCODE_MENU || e.getAction() != KeyEvent.ACTION_UP) return code == KeyEvent.KEYCODE_MENU;
+                if (code != KeyEvent.KEYCODE_MENU
+                        || e.getAction() != KeyEvent.ACTION_UP) return code == KeyEvent.KEYCODE_MENU;
                 Widgets.moveEarlier(this, key);
                 show(stack.peek(), false);
                 return true;
@@ -718,7 +734,8 @@ public final class SettingsHubActivity extends Activity {
         }
         r.addView(Ui.header(this, getString(R.string.widget_weather)));
         String city = Widgets.city(this);
-        r.addView(Ui.navRow(this, getString(R.string.hub_weather_city), city.isEmpty() ? getString(R.string.hub_not_set) : city,
+        r.addView(Ui.navRow(this, getString(R.string.hub_weather_city), city.isEmpty() ? getString(R.string.hub_not_set)
+                : city,
                 v -> startActivity(new Intent(this, WeatherActivity.class))));
         boolean f = Widgets.fahrenheit(this);
         r.addView(Ui.row(this, getString(R.string.hub_weather_unit), f ? "°F" : "°C", v -> {
@@ -768,7 +785,8 @@ public final class SettingsHubActivity extends Activity {
                 v -> startActivity(new Intent(this, ScenePreviewActivity.class))));
         boolean active = Scenes.isSystemScreensaver(this);
         r.addView(Ui.toggle(this, getString(R.string.hub_screensaver_use), active, v -> {
-            if (!Scenes.makeSystemScreensaver(this)) Toast.makeText(this, R.string.hub_screensaver_denied, Toast.LENGTH_LONG).show();
+            if (!Scenes.makeSystemScreensaver(this)) Toast.makeText(this, R.string.hub_screensaver_denied,
+                    Toast.LENGTH_LONG).show();
             show(stack.peek(), false);
         }));
         r.addView(pages.screensaverDelay());
@@ -901,14 +919,15 @@ public final class SettingsHubActivity extends Activity {
         f.setCornerRadius(Ui.dp(this, 4));
         fill.setBackground(f);
         int width = Ui.dp(this, 500);
-        track.addView(fill, new FrameLayout.LayoutParams((int) (width * Math.min(1.0, (double) used / mi.totalMem)), Ui.dp(this, 8)));
+        track.addView(fill, new FrameLayout.LayoutParams((int) (width * Math.min(1.0, (double) used / mi.totalMem)),
+                Ui.dp(this, 8)));
         LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(width, Ui.dp(this, 8));
         tl.topMargin = Ui.dp(this, 12);
         box.addView(track, tl);
         TextView free = Ui.text(this, freeMemory(), 13, R.string.font_light, Ui.TEXT_DIM);
         free.setPadding(0, Ui.dp(this, 10), 0, 0);
         box.addView(free);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP);
         lp.bottomMargin = Ui.dp(this, 14);
         box.setLayoutParams(lp);
         return box;
@@ -932,8 +951,10 @@ public final class SettingsHubActivity extends Activity {
         for (UsageStats u : stats.values()) {
             String pkg = u.getPackageName();
             if (pkg.equals(getPackageName()) || NEVER_CLOSE.contains(pkg)) continue;
-            if (u.getTotalTimeInForeground() <= 0 || u.getLastTimeUsed() < now - 12 * DateUtils.HOUR_IN_MILLIS) continue;
-            if (pm.getLeanbackLaunchIntentForPackage(pkg) == null && pm.getLaunchIntentForPackage(pkg) == null) continue;
+            if (u.getTotalTimeInForeground() <= 0
+                    || u.getLastTimeUsed() < now - 12 * DateUtils.HOUR_IN_MILLIS) continue;
+            if (pm.getLeanbackLaunchIntentForPackage(pkg) == null
+                    && pm.getLaunchIntentForPackage(pkg) == null) continue;
             out.add(u);
         }
         out.sort((a, b) -> Long.compare(b.getLastTimeUsed(), a.getLastTimeUsed()));

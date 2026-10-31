@@ -81,7 +81,8 @@ final class Profiles {
         String initial() {
             if (emoji != null && !emoji.isEmpty()) return emoji;
             String n = name.trim();
-            return n.isEmpty() ? "?" : n.substring(0, n.offsetByCodePoints(0, 1)).toUpperCase(java.util.Locale.getDefault());
+            return n.isEmpty() ? "?" : n.substring(0, n.offsetByCodePoints(0,
+                    1)).toUpperCase(java.util.Locale.getDefault());
         }
     }
 
@@ -193,7 +194,8 @@ final class Profiles {
 
     static void bumpRevision(Context ctx) {
         SharedPreferences settings = ctx.getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
-        settings.edit().putLong(Config.SETTINGS_REVISION_KEY, settings.getLong(Config.SETTINGS_REVISION_KEY, 0) + 1).apply();
+        settings.edit().putLong(Config.SETTINGS_REVISION_KEY, settings.getLong(Config.SETTINGS_REVISION_KEY, 0)
+                + 1).apply();
     }
 
     /** Whether the picker has anything to ask: more than one profile, or a PIN on the only one. */
@@ -213,7 +215,8 @@ final class Profiles {
     }
 
     private static int bootCount(Context ctx) {
-        return android.provider.Settings.Global.getInt(ctx.getContentResolver(), android.provider.Settings.Global.BOOT_COUNT, -1);
+        return android.provider.Settings.Global.getInt(ctx.getContentResolver(),
+                android.provider.Settings.Global.BOOT_COUNT, -1);
     }
 
     static Profile add(Context ctx, String name, int color) {
@@ -266,7 +269,8 @@ final class Profiles {
     /** The active profile's name for the greeting; none for the single default profile, which has no one's name. */
     static String greetingName(Context ctx) {
         Profile p = current(ctx);
-        if (p == null || (list(ctx).size() == 1 && p.name.equals(ctx.getString(R.string.profile_default_name)))) return "";
+        if (p == null || (list(ctx).size() == 1
+                && p.name.equals(ctx.getString(R.string.profile_default_name)))) return "";
         return p.name;
     }
 
@@ -307,7 +311,8 @@ final class Profiles {
 
     static void saveOverlay(Context ctx, JSONObject overlay) {
         File f = overlayFile(ctx, currentId(ctx));
-        // Atomically: power off in the middle of a plain write leaves half a file, and with it no Home for this profile.
+        // Atomically: power off in the middle of a plain write leaves half a file, and with it no Home for this
+        // profile.
         android.util.AtomicFile file = new android.util.AtomicFile(f);
         FileOutputStream out = null;
         try {

@@ -44,7 +44,8 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
      * @param lightGlass  a light frosted band like the pills, for a sky or wallpaper behind it.
      * @param evenPadding the band's padding is the gap between the tiles on all four sides (dock_even_padding).
      * @param bandVisible false skips the band and its edge, so the tiles float on the wallpaper (dock_band).
-     * @param singleRow   every app sits in the dock's row (single_row); the band covers the dock apps only, unless bandAll.
+     * @param singleRow   every app sits in the dock's row (single_row); the band covers the dock apps only, unless
+     * bandAll.
      * @param bandAll     with singleRow, the band runs behind every app in the row (dock_band_all).
      */
     DockDecoration(int dockSize, float density, boolean translucent, boolean names, int opacity, boolean lightGlass,
@@ -124,8 +125,10 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
         if (evenPadding) {
             // The same padding on all four sides, so the band's corners are concentric with the tiles' everywhere.
             int inner = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
-            // A single row's tiles can run off the screen, so only its top limits the padding; its ends are clamped below.
-            float room = (singleRow ? rect.top : Math.min(rect.top, Math.min(rect.left, parent.getWidth() - rect.right))) - density;
+            // A single row's tiles can run off the screen, so only its top limits the padding; its ends are clamped
+            // below.
+            float room = (singleRow ? rect.top : Math.min(rect.top, Math.min(rect.left,
+                    parent.getWidth() - rect.right))) - density;
             float even = evenPaddingPx(inner, dockSize, cardWidth, room);
             rect.inset(-even, -even);
             radius = radiusPx(radius, even);

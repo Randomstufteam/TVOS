@@ -11,7 +11,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,8 +90,7 @@ final class WallpaperPlayer {
                 ? WallpaperCaptions.read(files.get(0).getParentFile()) : Collections.emptyMap();
         caption = names.isEmpty() ? null : makeCaption(context, root);
         if (config.wallpaperEnabled && !files.isEmpty()) {
-            root.addView(image, 0, new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            root.addView(image, 0, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
             showFirst();
         }
     }
@@ -147,7 +145,9 @@ final class WallpaperPlayer {
         root.setBackgroundColor(backgroundColor);
     }
 
-    /** The pictures the rotation picks from now: wallpaper_moods' group for the time of day, or the whole collection. */
+    /**
+     * The pictures the rotation picks from now: wallpaper_moods' group for the time of day, or the whole collection.
+     */
     private List<File> playable() {
         if (moods.isEmpty()) return files;
         LocalDateTime now = LocalDateTime.now();
@@ -155,7 +155,8 @@ final class WallpaperPlayer {
             sunDay = now.toLocalDate();
             sun = WallpaperMood.sun(sunDay, latitude, longitude, ZoneId.systemDefault());
         }
-        return WallpaperMood.select(files, moods, WallpaperMood.timeOfDay(now.getHour() * 60 + now.getMinute(), sun[0], sun[1]));
+        return WallpaperMood.select(files, moods, WallpaperMood.timeOfDay(now.getHour() * 60 + now.getMinute(), sun[0],
+                sun[1]));
     }
 
     void close() {
@@ -226,8 +227,8 @@ final class WallpaperPlayer {
         } catch (Exception ignored) {
             // the system font is fine
         }
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.END);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(Ui.WRAP,
+                Ui.WRAP, Gravity.TOP | Gravity.END);
         params.topMargin = Math.round(110 * dp);
         params.setMarginEnd(Math.round(62 * dp));
         root.addView(text, params);

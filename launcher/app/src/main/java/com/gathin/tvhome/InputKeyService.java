@@ -80,7 +80,8 @@ public class InputKeyService extends AccessibilityService {
             }
             return true;
         } catch (RuntimeException e) {
-            android.util.Log.w(HomeKeyService.KEYS_TAG, "key " + event.getKeyCode() + " passed through after an error", e);
+            android.util.Log.w(HomeKeyService.KEYS_TAG, "key " + event.getKeyCode() + " passed through after an error",
+                    e);
             return false;
         }
     }

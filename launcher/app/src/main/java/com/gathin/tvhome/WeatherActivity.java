@@ -3,8 +3,10 @@ package com.gathin.tvhome;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +14,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,7 +32,8 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * The built-in Weather app: the profile's place (a chosen city, or the TV's own location), now in large type over a
- * sky that follows the conditions, the day's facts, a drawn graph of the next 12 hours and the week. Opened from the Weather widget, from Settings and as
+ * sky that follows the conditions, the day's facts, a drawn graph of the next 12 hours and the week. Opened from the
+ * Weather widget, from Settings and as
  * a tile. Reads Open-Meteo only while it is on screen and the last reading is over 30 minutes old.
  */
 public final class WeatherActivity extends Activity {
@@ -101,14 +103,15 @@ public final class WeatherActivity extends Activity {
         JSONObject f = Widgets.cachedForecast(this);
         Widgets.Weather now = Widgets.cachedWeather(this);
         int[] sky = now != null ? Widgets.sky(now.code, now.day) : new int[]{0xFF0F172A, 0xFF1E293B};
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{sky[0], sky[1], 0xFF05060A});
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{sky[0], sky[1],
+                0xFF05060A});
         root.setBackground(bg);
 
         content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         int side = Ui.dp(this, 64);
         content.setPadding(side, Ui.dp(this, 34), side, Ui.dp(this, 26));
-        root.addView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        root.addView(content, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
 
         // Top row: the place, and the pills.
         LinearLayout top = new LinearLayout(this);
@@ -116,17 +119,19 @@ public final class WeatherActivity extends Activity {
         String city = Widgets.city(this);
         LinearLayout place = new LinearLayout(this);
         place.setOrientation(LinearLayout.VERTICAL);
-        TextView cityText = Ui.text(this, city.isEmpty() ? getString(R.string.widget_weather) : city, 30, R.string.font_light, Ui.TEXT);
+        TextView cityText = Ui.text(this, city.isEmpty() ? getString(R.string.widget_weather) : city, 30,
+                R.string.font_light, Ui.TEXT);
         place.addView(cityText);
         String sub = Widgets.usesLocation(this) ? getString(R.string.weather_following_location)
                 : LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.getDefault()));
         long at = Widgets.weatherAt(this);
-        if (at > 0) sub += "  ·  " + getString(R.string.weather_updated, android.text.format.DateUtils.getRelativeTimeSpanString(
+        if (at > 0) sub += "  ·  " + getString(R.string.weather_updated,
+                android.text.format.DateUtils.getRelativeTimeSpanString(
                 at, System.currentTimeMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS));
         TextView subText = Ui.text(this, sub, 14, R.string.font_regular, 0xB3FFFFFF);
         subText.setPadding(0, Ui.dp(this, 6), 0, 0);
         place.addView(subText);
-        top.addView(place, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        top.addView(place, new LinearLayout.LayoutParams(0, Ui.WRAP, 1));
         top.addView(pill(getString(R.string.weather_use_location), "loc", v -> useLocation()));
         top.addView(pill(getString(R.string.weather_change_city), "city", v -> chooseCity()));
         boolean fahr = Widgets.fahrenheit(this);
@@ -186,7 +191,7 @@ public final class WeatherActivity extends Activity {
     private void body(JSONObject f, Widgets.Weather now, boolean fahr) {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1);
+        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(Ui.MATCH, 0, 1);
         rlp.topMargin = Ui.dp(this, 10);
         content.addView(row, rlp);
 
@@ -201,8 +206,10 @@ public final class WeatherActivity extends Activity {
         LinearLayout words = new LinearLayout(this);
         words.setOrientation(LinearLayout.VERTICAL);
         words.setPadding(Ui.dp(this, 20), 0, 0, 0);
-        words.addView(Ui.text(this, Widgets.glyph(now.code, now.day) + "  " + getString(Widgets.describe(now.code)), 22, R.string.font_light, Ui.TEXT));
-        TextView hilo = Ui.text(this, getString(R.string.widget_weather_hilo, Math.round(now.high), Math.round(now.low)),
+        words.addView(Ui.text(this, Widgets.glyph(now.code, now.day) + "  " + getString(Widgets.describe(now.code)), 22,
+                R.string.font_light, Ui.TEXT));
+        TextView hilo = Ui.text(this, getString(R.string.widget_weather_hilo, Math.round(now.high),
+                Math.round(now.low)),
                 16, R.string.font_regular, 0xCCFFFFFF);
         hilo.setPadding(0, Ui.dp(this, 8), 0, 0);
         words.addView(hilo);
@@ -218,22 +225,24 @@ public final class WeatherActivity extends Activity {
         LinearLayout facts = new LinearLayout(this);
         facts.setPadding(Ui.dp(this, 4), Ui.dp(this, 8), 0, 0);
         facts.addView(fact(getString(R.string.weather_feels), Math.round(now.feels) + "°"));
-        if (cur != null && cur.has("relative_humidity_2m")) facts.addView(fact(getString(R.string.weather_humidity), cur.optInt("relative_humidity_2m") + "%"));
+        if (cur != null && cur.has("relative_humidity_2m")) facts.addView(fact(getString(R.string.weather_humidity),
+                cur.optInt("relative_humidity_2m") + "%"));
         if (cur != null && cur.has("wind_speed_10m")) facts.addView(fact(getString(R.string.weather_wind),
                 Math.round(cur.optDouble("wind_speed_10m")) + (fahr ? " mph" : " km/h")));
         JSONObject today = f.optJSONObject("daily");
         JSONArray rain = today != null ? today.optJSONArray("precipitation_probability_max") : null;
-        if (rain != null && rain.length() > 0) facts.addView(fact(getString(R.string.weather_rain_chance), rain.optInt(0) + "%"));
+        if (rain != null && rain.length() > 0) facts.addView(fact(getString(R.string.weather_rain_chance),
+                rain.optInt(0) + "%"));
         left.addView(facts);
-        LinearLayout.LayoutParams hlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1);
+        LinearLayout.LayoutParams hlp = new LinearLayout.LayoutParams(Ui.MATCH, 0, 1);
         hlp.topMargin = Ui.dp(this, 14);
         left.addView(hourly(f), hlp);
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, Ui.MATCH, 1);
         llp.setMarginEnd(Ui.dp(this, 24));
         row.addView(left, llp);
 
         // Right: the week.
-        row.addView(week(f), new LinearLayout.LayoutParams(Ui.dp(this, 340), ViewGroup.LayoutParams.MATCH_PARENT));
+        row.addView(week(f), new LinearLayout.LayoutParams(Ui.dp(this, 340), Ui.MATCH));
     }
 
     /** "Sunrise 7:32  ·  Sunset 18:41" in the TV's clock format, or null when the reading has neither. */
@@ -241,7 +250,8 @@ public final class WeatherActivity extends Activity {
         JSONObject d = f.optJSONObject("daily");
         JSONArray up = d != null ? d.optJSONArray("sunrise") : null, down = d != null ? d.optJSONArray("sunset") : null;
         if (up == null || down == null || up.length() == 0 || down.length() == 0) return null;
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(android.text.format.DateFormat.is24HourFormat(this) ? "HH:mm" : "h:mm a", Locale.getDefault());
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(android.text.format.DateFormat.is24HourFormat(this)
+                ? "HH:mm" : "h:mm a", Locale.getDefault());
         return getString(R.string.weather_sunrise) + " " + LocalDateTime.parse(up.optString(0)).format(fmt) + "  ·  "
                 + getString(R.string.weather_sunset) + " " + LocalDateTime.parse(down.optString(0)).format(fmt);
     }
@@ -285,7 +295,8 @@ public final class WeatherActivity extends Activity {
         box.addView(title);
         JSONObject d = f.optJSONObject("daily");
         if (d == null) return box;
-        JSONArray days = d.optJSONArray("time"), hi = d.optJSONArray("temperature_2m_max"), lo = d.optJSONArray("temperature_2m_min"),
+        JSONArray days = d.optJSONArray("time"), hi = d.optJSONArray("temperature_2m_max"),
+                lo = d.optJSONArray("temperature_2m_min"),
                 code = d.optJSONArray("weather_code"), rain = d.optJSONArray("precipitation_probability_max");
         if (days == null || hi == null || lo == null) return box;
         double weekLo = Double.MAX_VALUE, weekHi = -Double.MAX_VALUE;
@@ -295,23 +306,27 @@ public final class WeatherActivity extends Activity {
         }
         for (int i = 0; i < days.length(); i++) {
             LocalDate date = LocalDate.parse(days.optString(i));
-            String name = i == 0 ? getString(R.string.weather_today) : date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
+            String name = i == 0 ? getString(R.string.weather_today)
+                    : date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
             LinearLayout r = new LinearLayout(this);
             r.setGravity(Gravity.CENTER_VERTICAL);
             r.setPadding(Ui.dp(this, 8), Ui.dp(this, 4), Ui.dp(this, 8), Ui.dp(this, 4));
             if (i == 0) r.setBackground(highlight());   // today stands out from the week
-            r.addView(Ui.text(this, name, 16, R.string.font_regular, Ui.TEXT), new LinearLayout.LayoutParams(Ui.dp(this, 56), ViewGroup.LayoutParams.WRAP_CONTENT));
+            r.addView(Ui.text(this, name, 16, R.string.font_regular, Ui.TEXT), new LinearLayout.LayoutParams(Ui.dp(this,
+                    56), Ui.WRAP));
             int c = code != null ? code.optInt(i) : 3;
-            r.addView(Ui.text(this, Widgets.glyph(c, true), 16, R.string.font_regular, Ui.TEXT), new LinearLayout.LayoutParams(Ui.dp(this, 30), ViewGroup.LayoutParams.WRAP_CONTENT));
+            r.addView(Ui.text(this, Widgets.glyph(c, true), 16, R.string.font_regular, Ui.TEXT),
+                    new LinearLayout.LayoutParams(Ui.dp(this, 30), Ui.WRAP));
             int chance = rain != null ? rain.optInt(i) : 0;
             TextView pc = Ui.text(this, chance >= 20 ? chance + "%" : "", 12, R.string.font_regular, 0xFF7DD3FC);
-            r.addView(pc, new LinearLayout.LayoutParams(Ui.dp(this, 38), ViewGroup.LayoutParams.WRAP_CONTENT));
+            r.addView(pc, new LinearLayout.LayoutParams(Ui.dp(this, 38), Ui.WRAP));
             r.addView(Ui.text(this, Math.round(lo.optDouble(i)) + "°", 15, R.string.font_light, 0xB3FFFFFF),
-                    new LinearLayout.LayoutParams(Ui.dp(this, 36), ViewGroup.LayoutParams.WRAP_CONTENT));
-            r.addView(rangeBar(weekLo, weekHi, lo.optDouble(i), hi.optDouble(i)), new LinearLayout.LayoutParams(0, Ui.dp(this, 5), 1));
+                    new LinearLayout.LayoutParams(Ui.dp(this, 36), Ui.WRAP));
+            r.addView(rangeBar(weekLo, weekHi, lo.optDouble(i), hi.optDouble(i)), new LinearLayout.LayoutParams(0,
+                    Ui.dp(this, 5), 1));
             TextView h = Ui.text(this, Math.round(hi.optDouble(i)) + "°", 15, R.string.font_regular, Ui.TEXT);
             h.setGravity(Gravity.END);
-            r.addView(h, new LinearLayout.LayoutParams(Ui.dp(this, 40), ViewGroup.LayoutParams.WRAP_CONTENT));
+            r.addView(h, new LinearLayout.LayoutParams(Ui.dp(this, 40), Ui.WRAP));
             box.addView(r);
         }
         return box;
@@ -325,7 +340,8 @@ public final class WeatherActivity extends Activity {
         t.setCornerRadius(Ui.dp(this, 3));
         track.setBackground(t);
         View fill = new View(this);
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0xFF67E8F9, 0xFFFDE047, 0xFFFB923C});
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{0xFF67E8F9,
+                0xFFFDE047, 0xFFFB923C});
         g.setCornerRadius(Ui.dp(this, 3));
         fill.setBackground(g);
         double span = Math.max(1, weekHi - weekLo);
@@ -339,7 +355,7 @@ public final class WeatherActivity extends Activity {
                 fill.post(fill::requestLayout);
             }
         });
-        track.addView(fill, new FrameLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT));
+        track.addView(fill, new FrameLayout.LayoutParams(0, Ui.MATCH));
         LinearLayout.LayoutParams m = new LinearLayout.LayoutParams(0, Ui.dp(this, 5), 1);
         m.setMargins(Ui.dp(this, 8), 0, Ui.dp(this, 8), 0);
         track.setLayoutParams(m);
@@ -355,7 +371,8 @@ public final class WeatherActivity extends Activity {
         title.setLetterSpacing(0.16f);
         box.addView(title);
         JSONObject h = f.optJSONObject("hourly");
-        JSONArray times = h != null ? h.optJSONArray("time") : null, temps = h != null ? h.optJSONArray("temperature_2m") : null;
+        JSONArray times = h != null ? h.optJSONArray("time") : null, temps = h != null
+                ? h.optJSONArray("temperature_2m") : null;
         if (times == null || temps == null) return box;
         JSONArray codes = h.optJSONArray("weather_code"), days = h.optJSONArray("is_day");
         int n = Math.min(12, Math.min(times.length(), temps.length()));
@@ -368,7 +385,7 @@ public final class WeatherActivity extends Activity {
             labels[i] = i == 0 ? getString(R.string.weather_now) : LocalDateTime.parse(times.optString(i)).format(fmt);
             glyphs[i] = Widgets.glyph(codes != null ? codes.optInt(i) : 3, days == null || days.optInt(i) == 1);
         }
-        box.addView(new TempGraph(this, values, labels, glyphs), new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+        box.addView(new TempGraph(this, values, labels, glyphs), new LinearLayout.LayoutParams(Ui.MATCH, 0, 1));
         return box;
     }
 
@@ -430,7 +447,7 @@ public final class WeatherActivity extends Activity {
             fill.lineTo(xs[n - 1], h);
             fill.lineTo(xs[0], h);
             fill.close();
-            area.setShader(new android.graphics.LinearGradient(0, top, 0, h, 0x40FFFFFF, 0x00FFFFFF, android.graphics.Shader.TileMode.CLAMP));
+            area.setShader(new LinearGradient(0, top, 0, h, 0x40FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
         }
 
         @Override
@@ -455,7 +472,7 @@ public final class WeatherActivity extends Activity {
     private TextView pill(String text, String tag, View.OnClickListener click) {
         TextView p = Ui.pill(this, text, click);
         p.setTag(tag);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, Ui.dp(this, 42));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.dp(this, 42));
         lp.setMarginStart(Ui.dp(this, 10));
         p.setLayoutParams(lp);
         return p;
@@ -494,7 +511,8 @@ public final class WeatherActivity extends Activity {
     }
 
     private void chooseCity() {
-        Ui.askText(this, getString(R.string.widget_weather_city_prompt), Widgets.usesLocation(this) ? "" : Widgets.city(this), 40,
+        Ui.askText(this, getString(R.string.widget_weather_city_prompt), Widgets.usesLocation(this)
+                ? "" : Widgets.city(this), 40,
                 query -> io.execute(() -> {
                     List<Widgets.Place> found;
                     try {

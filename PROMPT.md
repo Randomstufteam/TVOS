@@ -13,7 +13,7 @@ I want to install TVOS on my Android TV. My TV model is: <MODEL NAME HERE>. Work
 **1. Gather the files.** Clone the exact release, then work only from that folder:
 
 ```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/Randomstufteam/TVOS.git
+git clone --depth 1 --branch v1.1.0 https://github.com/Randomstufteam/TVOS.git
 cd TVOS
 python3 -m venv tools/venv
 tools/venv/bin/pip install -r tools/requirements.txt

@@ -33,7 +33,9 @@ import java.util.Set;
 final class ClockScene {
 
     private static final long MOVE_MS = 60_000L;
-    /** The glow's colour change: 16 steps over 8 s. Animated per frame it redrew the full-screen gradient ~480 times. */
+    /**
+     * The glow's colour change: 16 steps over 8 s. Animated per frame it redrew the full-screen gradient ~480 times.
+     */
     private static final int GLOW_STEPS = 16;
     private static final long GLOW_STEP_MS = 500L;
     /** Deep, low-brightness glow colours; the glow is drawn at partial alpha on black. */
@@ -52,7 +54,9 @@ final class ClockScene {
     private File wallpaperFile;
     private int wallpaperShade;
     private Resources wallpaperRes;
-    /** One number per decode request: a result whose number is no longer the current one is dropped. Main thread only. */
+    /**
+     * One number per decode request: a result whose number is no longer the current one is dropped. Main thread only.
+     */
     private int wallpaperGeneration;
     /** clock_wallpaper with a collection: the pictures, how long each lasts, and how the next one is picked. */
     private List<File> rotation;

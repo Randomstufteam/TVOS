@@ -62,7 +62,8 @@ final class LastOpened {
         }
         String day = DateUtils.getRelativeTimeSpanString(when, now, DateUtils.DAY_IN_MILLIS).toString();
         // It follows "Last opened" mid-sentence: "yesterday", not "Yesterday". Month names keep their capital.
-        if (Locale.getDefault().getLanguage().equals("en") && (day.startsWith("Yesterday") || day.startsWith("Today"))) {
+        if (Locale.getDefault().getLanguage().equals("en") && (day.startsWith("Yesterday")
+                || day.startsWith("Today"))) {
             day = Character.toLowerCase(day.charAt(0)) + day.substring(1);
         }
         return day + ", " + DateUtils.formatDateTime(ctx, when, DateUtils.FORMAT_SHOW_TIME);

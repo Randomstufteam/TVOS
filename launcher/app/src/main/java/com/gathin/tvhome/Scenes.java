@@ -54,7 +54,8 @@ final class Scenes {
     /** Makes the chosen scene Android's screensaver. False when the permission was never granted. */
     static boolean makeSystemScreensaver(Context ctx) {
         try {
-            Settings.Secure.putString(ctx.getContentResolver(), "screensaver_components", component(ctx).flattenToShortString());
+            Settings.Secure.putString(ctx.getContentResolver(), "screensaver_components",
+                    component(ctx).flattenToShortString());
             Settings.Secure.putInt(ctx.getContentResolver(), "screensaver_enabled", 1);
             return true;
         } catch (SecurityException notGranted) {

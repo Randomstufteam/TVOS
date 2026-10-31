@@ -127,7 +127,8 @@ final class SceneView extends View {
         ridge.reset();
         ridge.moveTo(0, h);
         for (int i = 0; i <= 24; i++) {
-            ridge.lineTo(w * i / 24f, h * 0.86f + h * 0.04f * (float) Math.sin(i * 1.3f) + h * 0.02f * (float) Math.sin(i * 3.1f));
+            ridge.lineTo(w * i / 24f, h * 0.86f + h * 0.04f * (float) Math.sin(i * 1.3f)
+                    + h * 0.02f * (float) Math.sin(i * 3.1f));
         }
         ridge.lineTo(w, h);
         ridge.close();
@@ -155,7 +156,8 @@ final class SceneView extends View {
         fill.setShader(s);
     }
 
-    // --- Aurora --------------------------------------------------------------------------------------------------------
+    // --- Aurora
+    // --------------------------------------------------------------------------------------------------------
 
     private void aurora(Canvas c, float t, int w) {
         fill.setShader(sky);
@@ -169,7 +171,8 @@ final class SceneView extends View {
             int steps = 48;
             for (int i = 0; i <= steps; i++) {
                 float x = w * i / (float) steps;
-                float y = base + amp * (float) Math.sin(x / w * 6.28f * (1.2f + k * 0.35f) + t * (0.35f + k * 0.12f) + k)
+                float y = base + amp * (float) Math.sin(x / w * 6.28f * (1.2f + k * 0.35f) + t * (0.35f + k * 0.12f)
+                        + k)
                         + amp * 0.4f * (float) Math.sin(x / w * 17f - t * 0.6f);
                 if (i == 0) path.moveTo(x, y);
                 else path.lineTo(x, y);
@@ -199,11 +202,13 @@ final class SceneView extends View {
         }
     }
 
-    // --- Warp ----------------------------------------------------------------------------------------------------------
+    // --- Warp
+    // ----------------------------------------------------------------------------------------------------------
 
     private void warp(Canvas c, float t, int w, int h) {
         c.drawColor(0xFF000005);
-        float cx = w / 2f + w * 0.05f * (float) Math.sin(t * 0.13f), cy = h / 2f + h * 0.05f * (float) Math.cos(t * 0.11f);
+        float cx = w / 2f + w * 0.05f * (float) Math.sin(t * 0.13f), cy = h / 2f
+                + h * 0.05f * (float) Math.cos(t * 0.11f);
         // A faint core glow where the stars come from.
         place(core, cx, cy, w * 0.35f);
         fill.setAlpha(255);
@@ -233,7 +238,8 @@ final class SceneView extends View {
         }
     }
 
-    // --- Nebula --------------------------------------------------------------------------------------------------------
+    // --- Nebula
+    // --------------------------------------------------------------------------------------------------------
 
     private void nebula(Canvas c, float t, int w, int h) {
         c.drawColor(0xFF03020A);

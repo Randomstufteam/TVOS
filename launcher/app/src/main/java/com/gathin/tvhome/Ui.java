@@ -3,12 +3,23 @@ package com.gathin.tvhome;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.RadialGradient;
+import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -17,7 +28,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.HashSet;
@@ -36,6 +50,8 @@ import java.util.function.Consumer;
  * no blur, so they stay cheap on a 1 GB TV.
  */
 final class Ui {
+    static final int WRAP = ViewGroup.LayoutParams.WRAP_CONTENT;
+    static final int MATCH = ViewGroup.LayoutParams.MATCH_PARENT;
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_DIM = 0xB3FFFFFF;
     static final int TEXT_FAINT = 0x80FFFFFF;
@@ -53,7 +69,7 @@ final class Ui {
 
     /** The backdrop's texture: small on purpose, stretched over the screen by the GPU (about 230 KB). */
     private static final int BACKDROP_W = 320, BACKDROP_H = 180;
-    private static android.graphics.Bitmap backdrop;
+    private static Bitmap backdrop;
     private static int backdropAccent;
 
     private Ui() {
@@ -66,21 +82,21 @@ final class Ui {
      */
     static synchronized Drawable backdrop(Context c, int accent) {
         if (backdrop == null || backdropAccent != accent) {
-            android.graphics.Bitmap b = android.graphics.Bitmap.createBitmap(BACKDROP_W, BACKDROP_H, android.graphics.Bitmap.Config.ARGB_8888);
-            android.graphics.Canvas canvas = new android.graphics.Canvas(b);
-            android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.DITHER_FLAG);
-            p.setShader(new android.graphics.LinearGradient(0, 0, 0, BACKDROP_H, 0xFF0B0D16, 0xFF05060B, android.graphics.Shader.TileMode.CLAMP));
+            Bitmap b = Bitmap.createBitmap(BACKDROP_W, BACKDROP_H, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(b);
+            Paint p = new Paint(Paint.DITHER_FLAG);
+            p.setShader(new LinearGradient(0, 0, 0, BACKDROP_H, 0xFF0B0D16, 0xFF05060B, Shader.TileMode.CLAMP));
             canvas.drawPaint(p);
-            p.setShader(new android.graphics.RadialGradient(BACKDROP_W * 0.16f, BACKDROP_H * 0.08f, BACKDROP_W * 0.72f,
-                    withAlpha(accent, 0x5C), withAlpha(accent, 0), android.graphics.Shader.TileMode.CLAMP));
+            p.setShader(new RadialGradient(BACKDROP_W * 0.16f, BACKDROP_H * 0.08f, BACKDROP_W * 0.72f,
+                    withAlpha(accent, 0x5C), withAlpha(accent, 0), Shader.TileMode.CLAMP));
             canvas.drawPaint(p);
-            p.setShader(new android.graphics.RadialGradient(BACKDROP_W * 0.92f, BACKDROP_H * 1.04f, BACKDROP_W * 0.6f,
-                    0x476366F1, 0x006366F1, android.graphics.Shader.TileMode.CLAMP));
+            p.setShader(new RadialGradient(BACKDROP_W * 0.92f, BACKDROP_H * 1.04f, BACKDROP_W * 0.6f,
+                    0x476366F1, 0x006366F1, Shader.TileMode.CLAMP));
             canvas.drawPaint(p);
             backdrop = b;
             backdropAccent = accent;
         }
-        android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(c.getResources(), backdrop);
+        BitmapDrawable d = new BitmapDrawable(c.getResources(), backdrop);
         d.setFilterBitmap(true);
         return d;
     }
@@ -95,10 +111,10 @@ final class Ui {
     /** An icon drawn once at the size it is shown: a full-density adaptive icon holds ten times those pixels. */
     static Drawable smallIcon(Context c, Drawable d, int px) {
         if (d == null) return null;
-        android.graphics.Bitmap b = android.graphics.Bitmap.createBitmap(px, px, android.graphics.Bitmap.Config.ARGB_8888);
+        Bitmap b = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
         d.setBounds(0, 0, px, px);
-        d.draw(new android.graphics.Canvas(b));
-        return new android.graphics.drawable.BitmapDrawable(c.getResources(), b);
+        d.draw(new Canvas(b));
+        return new BitmapDrawable(c.getResources(), b);
     }
 
     /** The dialogs each screen has open: a screen rebuilt under one must not leak it, or its whole view tree. */
@@ -121,7 +137,8 @@ final class Ui {
 
     /** The sheet behind a dialog. */
     static GradientDrawable sheet(Context c) {
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{SHEET_TOP, SHEET_BOTTOM});
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{SHEET_TOP,
+                SHEET_BOTTOM});
         bg.setCornerRadius(dp(c, 28));
         bg.setStroke(Math.max(1, dp(c, 1)), RIM);
         return bg;
@@ -134,7 +151,7 @@ final class Ui {
         p.setFocusable(true);
         p.setClickable(true);
         p.setBackground(focusGlass(c, 21));
-        p.setTextColor(new android.content.res.ColorStateList(
+        p.setTextColor(new ColorStateList(
                 new int[][]{{android.R.attr.state_focused}, {}}, new int[]{ON_FOCUS, TEXT}));
         p.setPadding(dp(c, 24), 0, dp(c, 24), 0);
         p.setMaxLines(1);
@@ -174,7 +191,7 @@ final class Ui {
     /** A row with a switch at its end. */
     static LinearLayout toggle(Context c, CharSequence title, boolean on, View.OnClickListener click) {
         LinearLayout r = row(c, title, null, click);
-        android.widget.FrameLayout track = new android.widget.FrameLayout(c);
+        FrameLayout track = new FrameLayout(c);
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(on ? SWITCH_ON : SWITCH_OFF);
         bg.setCornerRadius(dp(c, 12));
@@ -182,7 +199,7 @@ final class Ui {
         View knob = new View(c);
         knob.setBackground(circle(0xFFFFFFFF));
         int k = dp(c, 18);
-        android.widget.FrameLayout.LayoutParams klp = new android.widget.FrameLayout.LayoutParams(k, k,
+        FrameLayout.LayoutParams klp = new FrameLayout.LayoutParams(k, k,
                 Gravity.CENTER_VERTICAL | (on ? Gravity.END : Gravity.START));
         klp.setMargins(dp(c, 3), 0, dp(c, 3), 0);
         track.addView(knob, klp);
@@ -191,7 +208,8 @@ final class Ui {
     }
 
     static int dp(Context c, float v) {
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, c.getResources().getDisplayMetrics()));
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v,
+                c.getResources().getDisplayMetrics()));
     }
 
     static TextView text(Context c, CharSequence s, float sp, int font, int color) {
@@ -206,7 +224,8 @@ final class Ui {
 
     /** The frosted card behind widgets and Settings rows: a light vertical gradient with a hairline rim. */
     static GradientDrawable glass(Context c, float radiusDp) {
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{GLASS_TOP, GLASS_BOTTOM});
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{GLASS_TOP,
+                GLASS_BOTTOM});
         g.setCornerRadius(dp(c, radiusDp));
         g.setStroke(Math.max(1, dp(c, 1)), RIM);
         return g;
@@ -217,7 +236,8 @@ final class Ui {
         GradientDrawable on = new GradientDrawable();
         on.setColor(FOCUS);
         on.setCornerRadius(dp(c, radiusDp));
-        GradientDrawable idle = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0x1AFFFFFF, 0x0DFFFFFF});
+        GradientDrawable idle = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0x1AFFFFFF,
+                0x0DFFFFFF});
         idle.setCornerRadius(dp(c, radiusDp));
         idle.setStroke(Math.max(1, dp(c, 1)), 0x1FFFFFFF);
         StateListDrawable s = new StateListDrawable();
@@ -239,7 +259,8 @@ final class Ui {
      */
     static Drawable sheen(Context c, float radiusDp, int fillTop, int fillBottom, int rim, int rimPx) {
         float r = dp(c, radiusDp);
-        GradientDrawable fill = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{fillTop, fillBottom});
+        GradientDrawable fill = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{fillTop,
+                fillBottom});
         fill.setCornerRadius(r);
         GradientDrawable shine = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{0x26FFFFFF, 0x08FFFFFF, 0x00FFFFFF, 0x00FFFFFF});
@@ -262,7 +283,7 @@ final class Ui {
         on.setCornerRadius(dp(c, radiusDp));
         StateListDrawable s = new StateListDrawable();
         s.addState(new int[]{android.R.attr.state_focused}, on);
-        s.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        s.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
         return s;
     }
 
@@ -276,7 +297,8 @@ final class Ui {
     /** A profile colour as a lit sphere: a diagonal gradient with a soft highlight up and to the left. The first layer
      *  is the oval, so a view with this background casts a round shadow. */
     static Drawable avatar(int color) {
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{lighten(color, 0.28f), color, darken(color, 0.3f)});
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{lighten(color, 0.28f),
+                color, darken(color, 0.3f)});
         g.setShape(GradientDrawable.OVAL);
         GradientDrawable shine = new GradientDrawable();
         shine.setShape(GradientDrawable.OVAL);
@@ -305,7 +327,7 @@ final class Ui {
 
     /** Text that turns dark when its focusable parent (or itself) is focused on white. */
     static void textFocus(TextView t, int idle) {
-        t.setTextColor(new android.content.res.ColorStateList(
+        t.setTextColor(new ColorStateList(
                 new int[][]{{android.R.attr.state_focused}, {}}, new int[]{ON_FOCUS, idle}));
         t.setDuplicateParentStateEnabled(true);
     }
@@ -334,20 +356,20 @@ final class Ui {
         r.setPadding(dp(c, 22), 0, dp(c, 20), 0);
         TextView t = text(c, title, 17, R.string.font_regular, TEXT);
         t.setSingleLine(true);
-        t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        t.setEllipsize(TextUtils.TruncateAt.END);
         textFocus(t, TEXT);
-        r.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        r.addView(t, new LinearLayout.LayoutParams(0, WRAP, 1));
         if (detail != null) {
             TextView d = text(c, detail, 15, R.string.font_light, TEXT_DIM);
             d.setSingleLine(true);
-            d.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            d.setEllipsize(TextUtils.TruncateAt.END);
             d.setMaxWidth(dp(c, 300));
             textFocus(d, TEXT_DIM);
             d.setTag("detail");
             r.addView(d);
         }
         if (click != null) r.setOnClickListener(click);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(c, 54));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(MATCH, dp(c, 54));
         lp.bottomMargin = dp(c, 10);
         r.setLayoutParams(lp);
         raiseOnFocus(r);
@@ -362,15 +384,16 @@ final class Ui {
     /** Puts a rounded tile in the row's colour with a white glyph at the start of a row, as on Apple TV's Settings. */
     static LinearLayout withIcon(LinearLayout row, int icon, int color) {
         Context c = row.getContext();
-        android.widget.FrameLayout tile = new android.widget.FrameLayout(c);
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{lighten(color, 0.18f), darken(color, 0.12f)});
+        FrameLayout tile = new FrameLayout(c);
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{lighten(color,
+                0.18f), darken(color, 0.12f)});
         bg.setCornerRadius(dp(c, 9));
         tile.setBackground(bg);
-        android.widget.ImageView glyph = new android.widget.ImageView(c);
+        ImageView glyph = new ImageView(c);
         glyph.setImageResource(icon);
         glyph.setColorFilter(0xFFFFFFFF);
         int g = dp(c, 18);
-        tile.addView(glyph, new android.widget.FrameLayout.LayoutParams(g, g, Gravity.CENTER));
+        tile.addView(glyph, new FrameLayout.LayoutParams(g, g, Gravity.CENTER));
         int s = dp(c, 32);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(s, s);
         lp.setMarginEnd(dp(c, 16));
@@ -397,12 +420,12 @@ final class Ui {
      * tvOS does, instead of the stock jump that leaves the row stuck to the screen's top or bottom edge. At the
      * list's ends it stops where the list ends.
      */
-    static android.widget.ScrollView centeringScroll(Context c) {
-        android.widget.ScrollView scroll = new android.widget.ScrollView(c) {
-            private final android.graphics.Rect focusRect = new android.graphics.Rect();
+    static ScrollView centeringScroll(Context c) {
+        ScrollView scroll = new ScrollView(c) {
+            private final Rect focusRect = new Rect();
 
             @Override
-            protected int computeScrollDeltaToGetChildRectOnScreen(android.graphics.Rect rect) {
+            protected int computeScrollDeltaToGetChildRectOnScreen(Rect rect) {
                 return 0;   // requestChildFocus does the scrolling, smoothly and centred
             }
 
@@ -412,7 +435,8 @@ final class Ui {
                 if (getHeight() == 0 || getChildCount() == 0) return;
                 focused.getDrawingRect(focusRect);
                 offsetDescendantRectToMyCoords(focused, focusRect);
-                int range = Math.max(0, getChildAt(0).getHeight() - (getHeight() - getPaddingTop() - getPaddingBottom()));
+                int range = Math.max(0,
+                        getChildAt(0).getHeight() - (getHeight() - getPaddingTop() - getPaddingBottom()));
                 smoothScrollTo(0, Math.max(0, Math.min(range, focusRect.centerY() - getHeight() / 2)));
             }
         };
@@ -439,7 +463,7 @@ final class Ui {
             TextView t = text(a, title, 22, R.string.font_light, TEXT);
             t.setPadding(dp(a, 4), 0, 0, dp(a, 14));
             box.addView(t);
-            android.widget.ScrollView scroll = centeringScroll(a);
+            ScrollView scroll = centeringScroll(a);
             scroll.setClipToPadding(false);
             scroll.setPadding(0, dp(a, 4), 0, dp(a, 4));
             rows = new LinearLayout(a);
@@ -448,10 +472,10 @@ final class Ui {
             rows.setClipChildren(false);
             rows.setClipToPadding(false);   // the padding is room for the focused row to grow into
             scroll.addView(rows);
-            box.addView(scroll, new LinearLayout.LayoutParams(dp(a, 440), ViewGroup.LayoutParams.WRAP_CONTENT));
+            box.addView(scroll, new LinearLayout.LayoutParams(dp(a, 440), WRAP));
             dialog.setContentView(box);
             if (dialog.getWindow() != null) {
-                dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getWindow().setWindowAnimations(0);   // the panel's own motion below, not the stock zoom
             }
         }
@@ -476,7 +500,7 @@ final class Ui {
                 int max = Math.round(activity.getResources().getDisplayMetrics().heightPixels * 0.82f);
                 dialog.getWindow().getDecorView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 if (dialog.getWindow().getDecorView().getMeasuredHeight() > max) {
-                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, max);
+                    dialog.getWindow().setLayout(WRAP, max);
                 }
             }
         }
@@ -508,7 +532,7 @@ final class Ui {
         in.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(maxLength)});
         in.setBackground(glass(a, 14));
         in.setPadding(dp(a, 16), dp(a, 12), dp(a, 16), dp(a, 12));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(a, 420), ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(a, 420), WRAP);
         lp.topMargin = dp(a, 18);
         box.addView(in, lp);
         // Enter reaches the editor action listener on both key down and key up: answer only once.
@@ -533,7 +557,7 @@ final class Ui {
         box.addView(ok, okLp);
         d.setContentView(box);
         if (d.getWindow() != null) {
-            d.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             d.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             d.getWindow().setWindowAnimations(0);
             // Above the keyboard, which rises from the bottom of the screen.

@@ -17,7 +17,8 @@ final class InputNames {
         String s = raw.toString().trim();
         if (s.isEmpty() || s.equals("null")) return null;
         int amp = s.lastIndexOf('&');
-        // Only a type in Philips' form (three or more capitals, digits or underscores) is taken off, so "Tom & Jerry" stays.
+        // Only a type in Philips' form (three or more capitals, digits or underscores) is taken off, so "Tom & Jerry"
+        // stays.
         if (amp < 0 || !s.substring(amp + 1).matches("[A-Z][A-Z0-9_]{2,}")) return s;
         String name = s.substring(0, amp).trim();
         String emoji = emoji(s.substring(amp + 1));

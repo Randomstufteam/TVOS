@@ -247,12 +247,15 @@ final class Widgets {
     static Weather parseWeather(JSONObject json) throws JSONException {
         JSONObject cur = json.getJSONObject("current");
         JSONObject daily = json.getJSONObject("daily");
-        return new Weather(cur.getDouble("temperature_2m"), cur.optDouble("apparent_temperature", cur.getDouble("temperature_2m")),
-                daily.getJSONArray("temperature_2m_max").getDouble(0), daily.getJSONArray("temperature_2m_min").getDouble(0),
+        return new Weather(cur.getDouble("temperature_2m"), cur.optDouble("apparent_temperature",
+                cur.getDouble("temperature_2m")),
+                daily.getJSONArray("temperature_2m_max").getDouble(0),
+                        daily.getJSONArray("temperature_2m_min").getDouble(0),
                 cur.optInt("weather_code", 0), cur.optInt("is_day", 1) == 1);
     }
 
-    // --- location ------------------------------------------------------------------------------------------------------
+    // --- location
+    // ------------------------------------------------------------------------------------------------------
 
     static boolean usesLocation(Context ctx) {
         return prefs(ctx).getBoolean("use_location", false);
@@ -292,7 +295,8 @@ final class Widgets {
     private static String placeName(Context ctx, double lat, double lon) {
         try {
             if (android.location.Geocoder.isPresent()) {
-                List<android.location.Address> a = new android.location.Geocoder(ctx, Locale.getDefault()).getFromLocation(lat, lon, 1);
+                List<android.location.Address> a = new android.location.Geocoder(ctx,
+                        Locale.getDefault()).getFromLocation(lat, lon, 1);
                 if (a != null && !a.isEmpty()) {
                     String n = a.get(0).getLocality();
                     if (n == null) n = a.get(0).getSubAdminArea();
@@ -337,7 +341,8 @@ final class Widgets {
                 String v = o.optString(k, "");
                 if (!v.isEmpty()) detail.append(detail.length() > 0 ? ", " : "").append(v);
             }
-            out.add(new Place(o.getString("name"), detail.toString(), o.getDouble("latitude"), o.getDouble("longitude")));
+            out.add(new Place(o.getString("name"), detail.toString(), o.getDouble("latitude"),
+                    o.getDouble("longitude")));
         }
         return out;
     }
@@ -357,7 +362,8 @@ final class Widgets {
         }
     }
 
-    // --- how conditions look ---------------------------------------------------------------------------------------------
+    // --- how conditions look
+    // ---------------------------------------------------------------------------------------------
 
     /** WMO weather code to a word. */
     static int describe(int code) {
@@ -406,7 +412,8 @@ final class Widgets {
         return 0xFF3B82F6;
     }
 
-    // --- continue watching ---------------------------------------------------------------------------------------------
+    // --- continue watching
+    // ---------------------------------------------------------------------------------------------
 
     static final class Watched {
         final String title;
@@ -457,7 +464,8 @@ final class Widgets {
         while (list.size() > MAX_WATCHING) list.remove(list.size() - 1);
         JSONArray a = new JSONArray();
         try {
-            for (Watched w : list) a.put(new JSONObject().put("t", w.title).put("s", w.subtitle).put("p", w.pkg).put("at", w.at));
+            for (Watched w : list) a.put(new JSONObject().put("t", w.title).put("s", w.subtitle).put("p",
+                    w.pkg).put("at", w.at));
         } catch (JSONException e) {
             throw new IllegalStateException(e);
         }

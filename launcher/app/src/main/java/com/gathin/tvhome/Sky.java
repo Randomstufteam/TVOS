@@ -86,7 +86,8 @@ final class Sky {
         int m = Math.max(0, Math.min(1440, minuteOfDay));
         float ref;
         if (m < sunrise) ref = m * REF_SUNRISE / (float) sunrise;
-        else if (m < sunset) ref = REF_SUNRISE + (m - sunrise) * (REF_SUNSET - REF_SUNRISE) / (float) (sunset - sunrise);
+        else if (m < sunset) ref = REF_SUNRISE
+                + (m - sunrise) * (REF_SUNSET - REF_SUNRISE) / (float) (sunset - sunrise);
         else ref = REF_SUNSET + (m - sunset) * (1440 - REF_SUNSET) / (float) (1440 - sunset);
         return at(Math.round(ref));
     }

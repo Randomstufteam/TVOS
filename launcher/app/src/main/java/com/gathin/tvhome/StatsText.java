@@ -12,7 +12,8 @@ final class StatsText {
         if (!language.equals("he") && !language.equals("iw")) return text;
         Matcher matcher = MEASUREMENT.matcher(text);
         StringBuffer isolated = new StringBuffer();
-        while (matcher.find()) matcher.appendReplacement(isolated, Matcher.quoteReplacement("\u200E\u202A" + matcher.group() + "\u202C\u200E"));
+        while (matcher.find()) matcher.appendReplacement(isolated,
+                Matcher.quoteReplacement("\u200E\u202A" + matcher.group() + "\u202C\u200E"));
         matcher.appendTail(isolated);
         // Embeddings plus directional marks also work on TV text renderers that mishandle isolates.
         return "\u200F" + isolated.toString().replace("  ·  ", "\u200F  ·  \u200F");
