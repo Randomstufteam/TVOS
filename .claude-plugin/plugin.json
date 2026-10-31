@@ -1,0 +1,10 @@
+{
+  "name": "tvos",
+  "version": "1.0.0",
+  "description": "Install TVOS, a calm, fast home screen for Android TV, with Claude Code.",
+  "author": {
+    "name": "Randomstufteam"
+  },
+  "repository": "https://github.com/Randomstufteam/TVOS",
+  "license": "MIT"
+}

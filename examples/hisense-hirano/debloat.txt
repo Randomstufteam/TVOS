@@ -1,0 +1,22 @@
+# Hisense SmartTV (hirano, CVTE/MediaTek), Android 11, Google TV. A guide for this TV, not a list to apply blindly.
+# Check every package on your own TV first, and ask about anything the household uses.
+
+android.autoinstalls.config.google.gtvpai
+fusion.android.tv.demo
+com.mstar.android.tv.disclaimercustomization
+com.google.android.feedback
+com.google.android.partnersetup
+com.google.android.apps.nbu.smartconnect.tv
+com.mediatek.android.leanbacklauncher.partnercustomizer
+com.android.printspooler
+com.android.providers.calendar
+com.google.android.syncadapters.calendar
+com.haystack.android
+gov.nasa
+com.google.android.play.games
+com.google.android.youtube.tvmusic
+com.google.android.marvin.talkback
+com.google.android.tts
+com.google.android.apps.tv.dreamx
+com.google.android.apps.mediashell
+com.cvte.tv.hisenseproductregister

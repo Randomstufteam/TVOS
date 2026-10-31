@@ -1,0 +1,13 @@
+{
+  "name": "tvos",
+  "owner": {
+    "name": "Randomstufteam"
+  },
+  "plugins": [
+    {
+      "name": "tvos",
+      "source": "./",
+      "description": "Install TVOS, a calm, fast home screen for Android TV, with Claude Code."
+    }
+  ]
+}

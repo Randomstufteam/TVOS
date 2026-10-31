@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The TV pages inside the launcher's Settings (TvPages): network, sound, display, apps and about. -->
+<resources>
+    <string name="tv_network_wifi">Connected to %1$s</string>
+    <string name="tv_network_ethernet">Connected by cable</string>
+    <string name="tv_network_offline">Not connected</string>
+    <string name="tv_network_internet_ok">Internet is working</string>
+    <string name="tv_network_internet_none">Connected, but no internet</string>
+    <string name="tv_network_internet_off">Choose a network to get online</string>
+    <string name="tv_network_details">Details</string>
+    <string name="tv_network_ip">IP address</string>
+    <string name="tv_network_signal">Signal</string>
+    <string name="tv_network_signal_value">%1$s · %2$d dBm</string>
+    <string name="tv_network_speed">Link speed</string>
+    <string name="tv_network_speed_value">%1$d Mbps</string>
+    <string name="tv_network_band">Band</string>
+    <string name="tv_network_dns">Private DNS</string>
+    <string name="tv_network_dns_auto">Automatic</string>
+    <string name="tv_network_vpn">VPN</string>
+    <string name="tv_network_change">Choose a Wi-Fi network</string>
+    <string name="tv_network_change_hint">Android\'s Wi-Fi page</string>
+    <string name="tv_signal_excellent">Excellent</string>
+    <string name="tv_signal_good">Good</string>
+    <string name="tv_signal_fair">Fair</string>
+    <string name="tv_signal_weak">Weak</string>
+
+    <string name="tv_sound_volume">Volume</string>
+    <string name="tv_sound_fixed">Set on your sound system</string>
+    <string name="tv_sound_mute">Mute</string>
+    <string name="tv_sound_effects">Menu sounds</string>
+    <string name="tv_sound_more">Sound output and more</string>
+
+    <string name="tv_display_picture">Picture mode and backlight</string>
+    <string name="tv_display_picture_hint">The TV\'s own picture page</string>
+    <string name="tv_display_screensaver_after">Start screensaver after</string>
+    <string name="tv_display_minutes">%1$d min</string>
+    <string name="tv_display_hours">%1$d h</string>
+    <string name="tv_display_never">Never</string>
+    <string name="tv_display_no_permission">Needs the settings permission: run work/install-launcher.sh again</string>
+
+    <string name="tv_apps_summary">%1$d apps · %2$s used</string>
+    <string name="tv_apps_loading">Measuring your apps…</string>
+    <string name="tv_apps_open">Open</string>
+    <string name="tv_apps_hide">Hide from Home</string>
+    <string name="tv_apps_show">Show on Home</string>
+    <string name="tv_apps_info">Uninstall, storage and permissions</string>
+    <string name="tv_apps_note">Sizes include the app, its data and its cache.</string>
+
+    <string name="tv_about_android_value">Android %1$s</string>
+    <string name="tv_about_build">Build</string>
+    <string name="tv_about_chip">Chip</string>
+    <string name="tv_about_memory">Memory</string>
+    <string name="tv_about_memory_value">%1$s of %2$s free</string>
+    <string name="tv_about_storage">Storage</string>
+    <string name="tv_about_resolution">Resolution</string>
+    <string name="tv_about_uptime">On for</string>
+    <string name="tv_about_launcher">Launcher</string>
+    <string name="tv_about_more">Android\'s About page</string>
+</resources>

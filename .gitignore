@@ -1,0 +1,13 @@
+# Your TV's dumps, screenshots and notes stay local, as do keys and builds.
+backup/
+shots/
+work/
+tools/venv/
+tools/adbkey/
+__pycache__/
+launcher/.gradle/
+launcher/build/
+launcher/app/build/
+launcher/local.properties
+*.apk
+*.aab

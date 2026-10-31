@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Weather app's tile: a deep sky, a glowing sun behind a soft cloud. Drawn as a vector, so it stays sharp at
+     any tile size and costs no bitmap memory. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- Sky -->
+    <path android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="320" android:endY="180">
+                <item android:offset="0" android:color="#FF38BDF8" />
+                <item android:offset="0.55" android:color="#FF2563EB" />
+                <item android:offset="1" android:color="#FF1E3A8A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun glow -->
+    <path android:pathData="M196,62m-78,0a78,78 0,1 1,156 0a78,78 0,1 1,-156 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="196" android:centerY="62" android:gradientRadius="78">
+                <item android:offset="0" android:color="#99FDE68A" />
+                <item android:offset="0.45" android:color="#33FBBF24" />
+                <item android:offset="1" android:color="#00FBBF24" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun -->
+    <path android:pathData="M196,62m-32,0a32,32 0,1 1,64 0a32,32 0,1 1,-64 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="186" android:centerY="50" android:gradientRadius="44">
+                <item android:offset="0" android:color="#FFFFF7CC" />
+                <item android:offset="0.5" android:color="#FFFCD34D" />
+                <item android:offset="1" android:color="#FFF59E0B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Cloud shadow -->
+    <path
+        android:fillColor="#331E3A8A"
+        android:pathData="M104,146h120a26,26 0,0 0,0 -52a34,34 0,0 0,-64 -14a28,28 0,0 0,-50 18a24,24 0,0 0,-6 48z" />
+
+    <!-- Cloud -->
+    <path android:pathData="M100,140h120a26,26 0,0 0,0 -52a34,34 0,0 0,-64 -14a28,28 0,0 0,-50 18a24,24 0,0 0,-6 48z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="60" android:endX="0" android:endY="140">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="1" android:color="#FFDCE6F5" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The top bar's buttons. Focused, solid white (the text turns dark through pill_text). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#F5FFFFFF" />
+            <corners android:radius="21dp" />
+        </shape>
+    </item>
+    <!-- Reorder button while reorder mode is on (focus is on the tiles then). -->
+    <item android:state_activated="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#596EC1FF" />
+            <stroke android:width="1.5dp" android:color="#FF6EC1FF" />
+            <corners android:radius="21dp" />
+        </shape>
+    </item>
+    <!-- At rest nothing of its own: the top bar's one sheet of glass (MainActivity) shows through. -->
+    <item android:drawable="@android:color/transparent" />
+</selector>
